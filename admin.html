@@ -1,1 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>Apex Markets — Admin</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+        }
+
+        .admin-header p {
+            margin: 5px 0 0;
+            opacity: .7;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .admin-actions a,
+        .admin-actions button {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 9px;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .admin-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .admin-card {
+            border: 1px solid rgba(128,128,128,.25);
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .admin-card h3 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            opacity: .7;
+        }
+
+        .admin-number {
+            margin: 0;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .admin-panel {
+            border: 1px solid rgba(128,128,128,.25);
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .admin-panel h2 {
+            margin-top: 0;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 11px;
+            border-radius: 9px;
+            border: 1px solid #aaa;
+        }
+
+        .search-box button {
+            padding: 11px 15px;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px 9px;
+            border-bottom: 1px solid rgba(128,128,128,.2);
+        }
+
+        th {
+            font-size: 13px;
+            opacity: .7;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background: rgba(234,179,8,.15);
+        }
+
+        .status-verified {
+            background: rgba(22,163,74,.15);
+        }
+
+        .status-review {
+            background: rgba(59,130,246,.15);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 10px;
+            opacity: .65;
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(128,128,128,.2);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item small {
+            opacity: .65;
+        }
+
+        .admin-warning {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(234,179,8,.4);
+        }
+
+        .admin-warning strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 850px) {
+
+            .admin-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .admin-header {
+                align-items: flex-start;
+            }
+
+            .admin-header h1 {
+                font-size: 22px;
+            }
+
+            .admin-cards {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .admin-card {
+                padding: 12px;
+            }
+
+            .admin-number {
+                font-size: 19px;
+            }
+
+            .admin-actions a,
+            .admin-actions button {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        Apex Markets
+    </div>
+
+    <nav class="menu">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="index.html">Home</a>
+        <a href="#" onclick="adminLogout()">Logout</a>
+    </nav>
+
+</header>
+
+
+<main class="section">
+
+    <!-- ADMIN HEADER -->
+
+    <div class="admin-header">
+
+        <div>
+            <h1>Admin Dashboard</h1>
+            <p>Manage the Apex Markets platform.</p>
+        </div>
+
+        <div class="admin-actions">
+
+            <button onclick="refreshAdmin()">
+                🔄 Refresh
+            </button>
+
+            <a href="dashboard.html">
+                Customer Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- SAFETY NOTICE -->
+
+    <div class="admin-warning">
+
+        <strong>
+            ⚠️ Platform status
+        </strong>
+
+        This administration interface is currently connected to the website interface only.
+        No real customer funds, deposits or withdrawals are connected.
+
+    </div>
+
+
+    <!-- OVERVIEW -->
+
+    <div class="admin-cards">
+
+        <div class="admin-card">
+
+            <h3>Total Users</h3>
+
+            <p
+                class="admin-number"
+                id="totalUsers">
+
+                —
+
+            </p>
+
+        </div>
+
+
+        <div class="admin-card">
+
+            <h3>Active Users</h3>
+
+            <p
+                class="admin-number"
+                id="activeUsers">
+
+                —
+
+            </p>
+
+        </div>
+
+
+        <div class="admin-card">
+
+            <h3>Pending KYC</h3>
+
+            <p
+                class="admin-number"
+                id="pendingKyc">
+
+                —
+
+            </p>
+
+        </div>
+
+
+        <div class="admin-card">
+
+            <h3>Open Positions</h3>
+
+            <p
+                class="admin-number"
+                id="openPositionsCount">
+
+                —
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- USERS + ACTIVITY -->
+
+    <div class="admin-grid">
+
+
+        <!-- USERS -->
+
+        <section class="admin-panel">
+
+            <h2>Users</h2>
+
+            <div class="search-box">
+
+                <input
+                    type="search"
+                    id="userSearch"
+                    placeholder="Search users...">
+
+                <button onclick="searchUsers()">
+                    Search
+                </button>
+
+            </div>
+
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Balance</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="usersTable">
+
+                        <tr>
+                            <td colspan="4">
+
+                                <div class="empty-state">
+                                    No user records available.
+                                </div>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACTIVITY -->
+
+        <section class="admin-panel">
+
+            <h2>Recent Activity</h2>
+
+            <div id="activityList">
+
+                <div class="empty-state">
+                    No activity recorded.
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- DEPOSITS -->
+
+    <section class="admin-panel">
+
+        <h2>Deposits</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Reference</th>
+                        <th>User</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="depositsTable">
+
+                    <tr>
+
+                        <td colspan="4">
+
+                            <div class="empty-state">
+                                No deposit records available.
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <br>
+
+
+    <!-- WITHDRAWALS -->
+
+    <section class="admin-panel">
+
+        <h2>Withdrawals</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Reference</th>
+                        <th>User</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="withdrawalsTable">
+
+                    <tr>
+
+                        <td colspan="4">
+
+                            <div class="empty-state">
+                                No withdrawal records available.
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <br>
+
+
+    <!-- KYC -->
+
+    <section class="admin-panel">
+
+        <h2>KYC / Verification</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>User</th>
+                        <th>Verification</th>
+                        <th>Review</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="kycTable">
+
+                    <tr>
+
+                        <td colspan="3">
+
+                            <div class="empty-state">
+                                No verification records available.
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <br>
+
+
+    <!-- POSITIONS -->
+
+    <section class="admin-panel">
+
+        <h2>Open Positions</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>User</th>
+                        <th>Market</th>
+                        <th>Side</th>
+                        <th>Amount</th>
+                        <th>P/L</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="positionsTable">
+
+                    <tr>
+
+                        <td colspan="5">
+
+                            <div class="empty-state">
+                                No open positions available.
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <br>
+
+
+    <!-- TRANSACTIONS -->
+
+    <section class="admin-panel">
+
+        <h2>Transactions</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Reference</th>
+                        <th>User</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="transactionsTable">
+
+                    <tr>
+
+                        <td colspan="5">
+
+                            <div class="empty-state">
+                                No transaction records available.
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <p>
+        Apex Markets Administration
+    </p>
+
+</footer>
+
+
+<script>
+
+    /*
+     * ADMIN INTERFACE
+     *
+     * This page does not process real money.
+     * Real customer data should later come from
+     * a secure backend/database.
+     */
+
+
+    function refreshAdmin() {
+
+        loadAdminData();
+
+        alert("Admin data refreshed.");
+
+    }
+
+
+    function loadAdminData() {
+
+        /*
+         * We deliberately do not invent customer
+         * balances or transactions.
+         */
+
+        document.getElementById(
+            "totalUsers"
+        ).textContent = "—";
+
+        document.getElementById(
+            "activeUsers"
+        ).textContent = "—";
+
+        document.getElementById(
+            "pendingKyc"
+        ).textContent = "—";
+
+        document.getElementById(
+            "openPositionsCount"
+        ).textContent = "—";
+
+    }
+
+
+    function searchUsers() {
+
+        const search =
+            document.getElementById(
+                "userSearch"
+            ).value.trim();
+
+        if (!search) {
+
+            alert("Enter a user name or email to search.");
+
+            return;
+
+        }
+
+        alert(
+            "User search will be connected to the secure database when the backend is added."
+        );
+
+    }
+
+
+    function adminLogout() {
+
+        window.location.href =
+            "index.html";
+
+    }
+
+
+    loadAdminData();
+
+</script>
+
+</body>
+          </html>
