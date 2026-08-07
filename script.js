@@ -1,4 +1,4 @@
-async function createAccount() {
+) {
     const name =
         document.getElementById("name")?.value.trim();
 
