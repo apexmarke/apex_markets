@@ -83,7 +83,55 @@ async function createAccount() {
     window.location.href = "dashboard.html";
 }
 
-function login() {
+async function login() {
+    const email =
+        document.getElementById("loginEmail")?.value.trim();
+
+    const password =
+        document.getElementById("loginPassword")?.value;
+
+    if (!email || !password) {
+        alert("Please enter your email and password.");
+        return;
+    }
+
+    try {
+        const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+        if (error) {
+            alert(error.message);
+            return;
+        }
+
+        localStorage.setItem("apexLoggedIn", "true");
+
+        if (data.user?.user_metadata?.full_name) {
+            localStorage.setItem(
+                "apexName",
+                data.user.user_metadata.full_name
+            );
+        }
+
+        localStorage.setItem(
+            "apexEmail",
+            data.user.email || email
+        );
+
+        window.location.href = "dashboard.html";
+
+    } catch (error) {
+
+        alert(
+            "Unable to sign in. Please try again."
+        );
+
+        console.error(error);
+    }
+}{
     const email = document.getElementById("loginEmail")?.value.trim();
     const password = document.getElementById("loginPassword")?.value;
 
