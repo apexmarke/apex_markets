@@ -1,4 +1,62 @@
-function createAccount() {
+async function createAccount() {
+    const name =
+        document.getElementById("name")?.value.trim();
+
+    const email =
+        document.getElementById("email")?.value.trim();
+
+    const password =
+        document.getElementById("password")?.value;
+
+    if (!name || !email || !password) {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    if (password.length < 6) {
+        alert("Password should be at least 6 characters.");
+        return;
+    }
+
+    try {
+        const { data, error } =
+            await supabaseClient.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: {
+                        full_name: name
+                    }
+                }
+            });
+
+        if (error) {
+            alert(error.message);
+            return;
+        }
+
+        localStorage.setItem("apexName", name);
+        localStorage.setItem("apexEmail", email);
+        localStorage.setItem("apexTradingMode", "demo");
+        localStorage.setItem("apexBalance", "10000");
+
+        alert(
+            "Account created successfully. " +
+            "Please check your email if verification is required."
+        );
+
+        window.location.href = "dashboard.html";
+
+    } catch (error) {
+
+        alert(
+            "Unable to create the account. " +
+            "Please try again."
+        );
+
+        console.error(error);
+    }
+} {
     const name = document.getElementById("name")?.value.trim();
     const email = document.getElementById("email")?.value.trim();
     const password = document.getElementById("password")?.value;
