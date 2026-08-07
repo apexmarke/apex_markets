@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Apex Markets</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        Apex Markets
+    </div>
+
+    <nav class="menu">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="index.html">Home</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </nav>
+
+</header>
+
+
+<section class="section">
+
+    <div class="profile-box">
+
+        <div class="profile-icon">
+            👤
+        </div>
+
+        <h1 id="profileName">
+            User
+        </h1>
+
+        <p id="profileEmail">
+            Email
+        </p>
+
+        <div class="account-status">
+            <span>ACCOUNT STATUS</span>
+            <strong>Active</strong>
+        </div>
+
+    </div>
+
+
+    <div class="profile-details">
+
+        <h2>Account Information</h2>
+
+        <div class="detail-row">
+            <span>Full Name</span>
+            <strong id="detailName">-</strong>
+        </div>
+
+        <div class="detail-row">
+            <span>Email</span>
+            <strong id="detailEmail">-</strong>
+        </div>
+
+        <div class="detail-row">
+            <span>Account Type</span>
+            <strong>Demo / Real</strong>
+        </div>
+
+        <div class="detail-row">
+            <span>Verification</span>
+            <strong class="pending">
+                Pending
+            </strong>
+        </div>
+
+    </div>
+
+
+    <div class="profile-details">
+
+        <h2>Security</h2>
+
+        <p>
+            Your account is currently using browser-based
+            demo authentication.
+        </p>
+
+        <br>
+
+        <button
+            class="btn secondary-btn"
+            onclick="showSecurityMessage()">
+            Security Information
+        </button>
+
+    </div>
+
+
+    <a
+        href="dashboard.html"
+        class="btn primary-btn">
+        Back to Dashboard
+    </a>
+
+</section>
+
+
+<footer>
+
+    <p>Apex Markets Demo Platform</p>
+
+    <p>
+        Real-money functionality is not currently enabled.
+    </p>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+<script>
+
+const loggedIn =
+    localStorage.getItem("apexLoggedIn");
+
+if (loggedIn !== "true") {
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+const name =
+    localStorage.getItem("apexName") || "User";
+
+const email =
+    localStorage.getItem("apexEmail") || "Not available";
+
+
+document.getElementById("profileName")
+    .textContent = name;
+
+document.getElementById("profileEmail")
+    .textContent = email;
+
+document.getElementById("detailName")
+    .textContent = name;
+
+document.getElementById("detailEmail")
+    .textContent = email;
+
+</script>
+
+</body>
+</html>

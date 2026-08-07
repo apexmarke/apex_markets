@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Markets Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        Apex Markets
+    </div>
+
+    <nav class="menu">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="index.html">Home</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </nav>
+
+</header>
+
+
+<section class="section">
+
+    <h1 id="welcome">
+        Welcome to Apex Markets
+    </h1>
+
+<div class="mode-switch">
+
+    <span>Trading Mode:</span>
+
+    <button
+        id="demoModeBtn"
+        class="mode-btn active"
+        onclick="setTradingMode('demo')">
+        🧪 Demo
+    </button>
+
+    <button
+        id="realModeBtn"
+        class="mode-btn"
+        onclick="setTradingMode('real')">
+        💳 Real
+    </button>
+
+</div>
+
+<p id="modeMessage">
+    Demo Mode — simulated trading only.
+</p>
+
+    <br>
+
+
+    <!-- ACCOUNT SUMMARY -->
+
+    <div class="market-grid">
+
+        <div class="market-card">
+
+            <h3>Demo Balance</h3>
+
+            <p class="price" id="balance">
+                $10,000.00
+            </p>
+
+            <span>Available Balance</span>
+
+        </div>
+
+
+        <div class="market-card">
+
+            <h3>Today's P/L</h3>
+
+            <p class="price" id="profit">
+                $0.00
+            </p>
+
+            <span class="positive">
+                Demo Account
+            </span>
+
+        </div>
+
+
+        <div class="market-card">
+
+            <h3>Account Status</h3>
+
+            <p class="price">
+                Active
+            </p>
+
+            <span class="positive">
+                Demo
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- TRADING AREA -->
+
+<section class="section">
+
+    <h2>Trading Terminal</h2>
+<div id="realModeNotice" class="real-account">
+
+    <div class="real-account-header">
+        <span class="real-badge">REAL ACCOUNT</span>
+        <h2>Real Account Center</h2>
+        <p>
+            Real-money functionality is currently unavailable.
+        </p>
+    </div>
+
+    <div class="real-balance">
+        <span>Real Account Balance</span>
+        <strong>$0.00</strong>
+    </div>
+
+    <div class="real-actions">
+
+        <button
+            class="btn primary-btn"
+            onclick="showRealFeature('deposit')">
+            Deposit
+        </button>
+
+        <button
+            class="btn secondary-btn"
+            onclick="showRealFeature('withdraw')">
+            Withdraw
+        </button>
+
+    </div>
+
+    <div class="security-box">
+
+        <h3>Account Verification</h3>
+
+        <p>✓ Email account created</p>
+
+        <p>○ Identity verification: Pending</p>
+
+        <p>○ Account approval: Pending</p>
+
+    </div>
+
+    <div class="transaction-box">
+
+        <h3>Transaction History</h3>
+
+        <p>No real transactions yet.</p>
+
+    </div>
+
+</div>
+    <h3>Real Trading</h3>
+    <p>
+        Real-money trading is not yet enabled.
+        This section will be connected only after
+        secure account, payment and trading infrastructure
+        is implemented.
+    </p>
+</div>
+    <div class="trading-panel">
+
+
+        <!-- CHART -->
+
+        <div class="chart-box">
+
+            <h3>BTC/USD</h3>
+
+            <canvas id="tradingChart"></canvas>
+
+        </div>
+
+
+        <!-- ORDER PANEL -->
+
+        <div class="order-panel">
+
+            <h3>Place Demo Order</h3>
+
+            <br>
+
+            <label>
+                Select Market
+            </label>
+
+            <select id="market">
+
+                <option value="BTC/USD">
+                    BTC/USD
+                </option>
+
+                <option value="EUR/USD">
+                    EUR/USD
+                </option>
+
+                <option value="GOLD">
+                    GOLD
+                </option>
+
+            </select>
+
+
+            <label>
+                Trade Amount
+            </label>
+
+            <input
+                type="number"
+                id="tradeAmount"
+                placeholder="Enter amount"
+                min="1"
+            >
+
+
+            <div class="order-buttons">
+
+                <button
+                    class="btn primary-btn"
+                    onclick="placeOrder('BUY')"
+                >
+                    BUY
+                </button>
+
+
+                <button
+                    class="btn secondary-btn"
+                    onclick="placeOrder('SELL')"
+                >
+                    SELL
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- MARKETS -->
+
+<section class="section">
+
+    <h2>Markets</h2>
+
+
+    <div class="market-grid">
+
+
+        <div class="market-card">
+
+            <h3>BTC/USD</h3>
+
+            <p class="price">
+                $118,500
+            </p>
+
+            <span class="positive">
+                +2.45%
+            </span>
+
+        </div>
+
+
+        <div class="market-card">
+
+            <h3>EUR/USD</h3>
+
+            <p class="price">
+                1.1725
+            </p>
+
+            <span class="positive">
+                +0.38%
+            </span>
+
+        </div>
+
+
+        <div class="market-card">
+
+            <h3>GOLD</h3>
+
+            <p class="price">
+                $3,450
+            </p>
+
+            <span class="positive">
+                +1.12%
+            </span>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- TRADE HISTORY -->
+
+<!-- OPEN POSITIONS -->
+
+<section class="section">
+
+    <h2>Open Demo Positions</h2>
+
+    <div id="openPositions">
+
+        <p>
+            No open positions.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- TRADE HISTORY -->
+
+<section class="section">
+
+    <h2>Demo Trade History</h2>
+
+    <div id="tradeHistory">
+
+        <p>
+            No trades yet.
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<footer>
+
+    <p>
+        Apex Markets Demo Platform
+    </p>
+
+    <p>
+        Simulated trading only — no real money.
+    </p>
+
+</footer>
+
+
+
+<script src="script.js"></script>
+
+
+<script>
+
+const loggedIn =
+    localStorage.getItem("apexLoggedIn");
+
+
+if (loggedIn !== "true") {
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+const name =
+    localStorage.getItem("apexName");
+
+
+if (name) {
+
+    document.getElementById(
+        "welcome"
+    ).textContent =
+        "Welcome, " + name + "!";
+
+}
+
+
+updateAccountDisplay();
+
+createTradingChart();
+
+loadTradeHistory();
+loadOpenPositions();
+loadTradingMode();
+</script>
+
+
+</body>
+</html>
