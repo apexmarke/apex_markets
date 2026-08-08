@@ -59,7 +59,13 @@
 <button
     type="button"
     class="btn primary-btn"
-    onclick="createAccount()"
+    onclick="
+        try {
+            createAccount();
+        } catch (error) {
+            alert(error.message);
+        }
+    "
 >
     Create Account
 </button>
