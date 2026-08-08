@@ -1,22 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Sign Up - Apex Markets</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header class="header">
-    <div class="logo">Apex Markets</div>
+
+    <div class="logo">
+        Apex Markets
+    </div>
 
     <nav class="menu">
         <a href="index.html">Home</a>
         <a href="login.html">Login</a>
     </nav>
+
 </header>
+
 
 <section class="section">
 
@@ -28,11 +36,13 @@
 
         <br>
 
+
         <input
             type="text"
             id="name"
             placeholder="Full Name"
         >
+
 
         <input
             type="email"
@@ -40,28 +50,44 @@
             placeholder="Email Address"
         >
 
+
         <input
             type="password"
             id="password"
             placeholder="Password"
-        ><button
-    class="btn primary-btn"
-    onclick="createAccount()">
-    Create Account
+        >
+
+
+        <button
+            type="button"
+            class="btn primary-btn"
+            onclick="createAccount()"
+        >
+            Create Account
         </button>
+
 
         <br><br>
 
+
         <p>Already have an account?</p>
 
-        <a href="login.html">Login here</a>
+        <a href="login.html">
+            Login here
+        </a>
 
     </div>
 
 </section>
+
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase.js"></script>
+
 <script src="script.js"></script>
 
+
 </body>
+
 </html>
