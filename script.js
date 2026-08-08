@@ -31,45 +31,81 @@ async function createAccount() {
     }
 
 
-    if (
-        typeof supabaseClient === "undefined"
-    ) {
-        alert(
-            "Supabase connection is not available."
-        );
+    if (typeof supabaseClient === "undefined") {
+        alert("Supabase connection is not available.");
         return;
     }
 
 
     try {
 
+        // Create Supabase authentication account
         const {
             data,
             error
-        } =
-            await supabaseClient.auth.signUp({
+        } = await supabaseClient.auth.signUp({
 
-                email: email,
+            email: email,
 
-                password: password,
+            password: password,
 
-                options: {
-                    data: {
-                        full_name: name
-                    }
+            options: {
+                data: {
+                    full_name: name
                 }
+            }
 
-            });
+        });
 
 
         if (error) {
 
             alert(error.message);
+            return;
+        }
+
+
+        // Make sure Supabase returned a user
+        if (!data.user) {
+
+            alert(
+                "Account created, but no user was returned."
+            );
 
             return;
         }
 
 
+        // Create profile record
+        const {
+            error: profileError
+        } = await supabaseClient
+            .from("Profile")
+            .insert({
+
+                diid: data.user.id,
+
+                emab_llufcreated_at: name,
+
+                "ail me": email
+
+            });
+
+
+        if (profileError) {
+
+            console.error(profileError);
+
+            alert(
+                "Account was created, but profile creation failed: " +
+                profileError.message
+            );
+
+            return;
+        }
+
+
+        // Save local information
         localStorage.setItem(
             "apexName",
             name
@@ -117,8 +153,6 @@ async function createAccount() {
     }
 
 }
-
-
 
 // ================================
 // LOGIN
