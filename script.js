@@ -513,7 +513,81 @@ function placeOrder(side) {
 // REAL FEATURES
 // ================================
 
-function showRealFeature(feature) {
+// ================================
+// REAL FEATURES
+// ================================
+
+async function showRealFeature(feature) {
+
+    if (feature === "deposit") {
+
+        const phone = prompt(
+            "Enter your M-Pesa phone number:"
+        );
+
+        if (!phone) {
+            return;
+        }
+
+        const amount = prompt(
+            "Enter deposit amount:"
+        );
+
+        if (!amount || Number(amount) <= 0) {
+            alert("Please enter a valid amount.");
+            return;
+        }
+
+        try {
+
+            const { data, error } =
+                await supabaseClient.functions.invoke(
+                    "mpesa-stk",
+                    {
+                        body: {
+                            phone: phone,
+                            amount: Number(amount)
+                        }
+                    }
+                );
+
+            if (error) {
+                console.error(error);
+                alert(
+                    "Deposit request failed: " +
+                    error.message
+                );
+                return;
+            }
+
+            console.log("M-Pesa response:", data);
+
+            alert(
+                "Deposit request sent successfully. " +
+                "Check your phone for the M-Pesa prompt."
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Unable to process deposit: " +
+                error.message
+            );
+        }
+    }
+
+
+    if (feature === "withdraw") {
+
+        alert(
+            "Withdrawals are not available yet."
+        );
+
+    }
+
+} {
 
     if (feature === "deposit") {
 
