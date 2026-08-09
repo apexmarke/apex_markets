@@ -39,7 +39,6 @@ async function createAccount() {
 
     try {
 
-        // Create Supabase authentication account
         const {
             data,
             error
@@ -62,10 +61,10 @@ async function createAccount() {
 
             alert(error.message);
             return;
+
         }
 
 
-        // Make sure Supabase returned a user
         if (!data.user) {
 
             alert(
@@ -73,39 +72,12 @@ async function createAccount() {
             );
 
             return;
+
         }
 
 
-        // Create profile record
-        const {
-            error: profileError
-        } = await supabaseClient
-            .from("Profile")
-            .insert({
+        // Save user information locally
 
-                diid: data.user.id,
-
-                emab_llufcreated_at: name,
-
-                "ail me": email
-
-            });
-
-
-        if (profileError) {
-
-            console.error(profileError);
-
-            alert(
-                "Account was created, but profile creation failed: " +
-                profileError.message
-            );
-
-            return;
-        }
-
-
-        // Save local information
         localStorage.setItem(
             "apexName",
             name
@@ -154,6 +126,8 @@ async function createAccount() {
 
 }
 
+
+
 // ================================
 // LOGIN
 // ================================
@@ -178,6 +152,7 @@ async function login() {
         );
 
         return;
+
     }
 
 
@@ -190,6 +165,7 @@ async function login() {
         );
 
         return;
+
     }
 
 
@@ -214,6 +190,7 @@ async function login() {
             alert(error.message);
 
             return;
+
         }
 
 
@@ -255,6 +232,20 @@ async function login() {
         }
 
 
+        if (
+            !localStorage.getItem(
+                "apexTradingMode"
+            )
+        ) {
+
+            localStorage.setItem(
+                "apexTradingMode",
+                "demo"
+            );
+
+        }
+
+
         window.location.href =
             "dashboard.html";
 
@@ -280,11 +271,19 @@ async function login() {
 
 async function logout() {
 
-    if (
-        typeof supabaseClient !== "undefined"
-    ) {
+    try {
 
-        await supabaseClient.auth.signOut();
+        if (
+            typeof supabaseClient !== "undefined"
+        ) {
+
+            await supabaseClient.auth.signOut();
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
 
     }
 
@@ -439,6 +438,7 @@ function placeOrder(side) {
         );
 
         return;
+
     }
 
 
@@ -463,6 +463,7 @@ function placeOrder(side) {
         );
 
         return;
+
     }
 
 
@@ -481,6 +482,7 @@ function placeOrder(side) {
         );
 
         return;
+
     }
 
 
@@ -510,70 +512,124 @@ function placeOrder(side) {
 
 
 // ================================
-// REAL FEATURES
-// ================================
-
-// ================================
-// REAL FEATURES
+// DEPOSIT & WITHDRAWAL
 // ================================
 
 async function showRealFeature(feature) {
 
-    if (feature === "deposit") {
+    // Check Supabase connection
 
-        if (typeof supabaseClient === "undefined") {
-            alert("Supabase connection is not available.");
-            return;
-        }
+    if (
+        typeof supabaseClient === "undefined"
+    ) {
+
+        alert(
+            "Supabase connection is not available."
+        );
+
+        return;
+
+    }
+
+
+    // Get logged-in user
+
+    let user;
+
+
+    try {
 
         const {
-            data: {
-                user
-            },
-            error: userError
-        } = await supabaseClient.auth.getUser();
+            data,
+            error
+        } =
+            await supabaseClient.auth.getUser();
 
-        if (userError || !user) {
-            alert("Please log in again.");
+
+        if (error || !data.user) {
+
+            alert(
+                "Please log in again."
+            );
+
             return;
+
         }
 
-        const phone = prompt(
-            "Enter your M-Pesa phone number:"
+
+        user = data.user;
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to verify your account."
         );
+
+        return;
+
+    }
+
+
+
+    // ==============================
+    // DEPOSIT
+    // ==============================
+
+    if (feature === "deposit") {
+
+        const phone =
+            prompt(
+                "Enter your M-Pesa phone number:"
+            );
+
 
         if (!phone) {
             return;
         }
 
-        const amountInput = prompt(
-            "Enter deposit amount:"
-        );
 
-        const amount = Number(amountInput);
+        const amountInput =
+            prompt(
+                "Enter deposit amount:"
+            );
+
+
+        const amount =
+            Number(amountInput);
+
 
         if (!amount || amount <= 0) {
-            alert("Please enter a valid amount.");
+
+            alert(
+                "Please enter a valid amount."
+            );
+
             return;
+
         }
+
 
         try {
 
             const {
                 error
-            } = await supabaseClient
-                .from("deposits")
-                .insert({
+            } =
+                await supabaseClient
+                    .from("deposits")
+                    .insert({
 
-                    user_id: user.id,
+                        user_id: user.id,
 
-                    amount: amount,
+                        amount: amount,
 
-                    phone: phone,
+                        phone: phone,
 
-                    status: "pending"
+                        status: "pending"
 
-                });
+                    });
+
 
             if (error) {
 
@@ -585,129 +641,140 @@ async function showRealFeature(feature) {
                 );
 
                 return;
+
             }
 
+
             alert(
-                "Deposit request submitted successfully.\n\n" +
+                "Deposit request submitted successfully!\n\n" +
                 "Amount: $" +
                 amount.toFixed(2) +
                 "\n" +
+                "Phone: " +
+                phone +
+                "\n" +
                 "Status: Pending"
             );
+
 
         } catch (error) {
 
             console.error(error);
 
             alert(
-                "Unable to submit deposit request: " +
+                "Unable to submit deposit: " +
                 error.message
             );
 
         }
 
+
         return;
+
     }
 
+
+
+    // ==============================
+    // WITHDRAWAL
+    // ==============================
 
     if (feature === "withdraw") {
 
-        alert(
-            "Withdrawals are not available yet."
-        );
+        const amountInput =
+            prompt(
+                "Enter withdrawal amount:"
+            );
 
-        return;
-    }
 
-}
+        const amount =
+            Number(amountInput);
 
-    if (feature === "deposit") {
 
-        const phone = prompt(
-            "Enter your M-Pesa phone number:"
-        );
+        if (!amount || amount <= 0) {
+
+            alert(
+                "Please enter a valid withdrawal amount."
+            );
+
+            return;
+
+        }
+
+
+        const phone =
+            prompt(
+                "Enter your M-Pesa phone number:"
+            );
+
 
         if (!phone) {
             return;
         }
 
-        const amount = prompt(
-            "Enter deposit amount:"
-        );
-
-        if (!amount || Number(amount) <= 0) {
-            alert("Please enter a valid amount.");
-            return;
-        }
 
         try {
 
-            const { data, error } =
-                await supabaseClient.functions.invoke(
-                    "mpesa-stk",
-                    {
-                        body: {
-                            phone: phone,
-                            amount: Number(amount)
-                        }
-                    }
-                );
+            const {
+                error
+            } =
+                await supabaseClient
+                    .from("withdrawals")
+                    .insert({
+
+                        user_id: user.id,
+
+                        amount: amount,
+
+                        phone: phone,
+
+                        status: "pending"
+
+                    });
+
 
             if (error) {
+
                 console.error(error);
+
                 alert(
-                    "Deposit request failed: " +
+                    "Withdrawal request failed: " +
                     error.message
                 );
+
                 return;
+
             }
 
-            console.log("M-Pesa response:", data);
 
             alert(
-                "Deposit request sent successfully. " +
-                "Check your phone for the M-Pesa prompt."
+                "Withdrawal request submitted successfully!\n\n" +
+                "Amount: $" +
+                amount.toFixed(2) +
+                "\n" +
+                "Phone: " +
+                phone +
+                "\n" +
+                "Status: Pending"
             );
+
 
         } catch (error) {
 
             console.error(error);
 
             alert(
-                "Unable to process deposit: " +
+                "Unable to submit withdrawal: " +
                 error.message
             );
+
         }
-    }
 
 
-    if (feature === "withdraw") {
-
-        alert(
-            "Withdrawals are not available yet."
-        );
+        return;
 
     }
 
-} {
-
-    if (feature === "deposit") {
-
-        alert(
-            "Deposits are not available yet. " +
-            "Real-money payment processing has not been enabled."
-        );
-
-    }
-
-
-    if (feature === "withdraw") {
-
-        alert(
-            "Withdrawals are not available yet."
-        );
-
-    }
 
 }
 
@@ -721,8 +788,8 @@ function showSecurityMessage() {
 
     alert(
         "Apex Markets is currently a demo/learning platform. " +
-        "Secure server-side authentication and payment systems " +
-        "must be added before real-money trading can be enabled."
+        "Secure server-side payment processing must be added " +
+        "before real-money transactions can be enabled."
     );
 
 }
@@ -861,4 +928,23 @@ function loadAdminDashboard() {
 
     }
 
-        }
+}
+
+
+
+// ================================
+// PAGE INITIALIZATION
+// ================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        loadTradingMode();
+
+        updateAccountDisplay();
+
+        loadAdminDashboard();
+
+    }
+);
