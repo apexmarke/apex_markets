@@ -521,6 +521,108 @@ async function showRealFeature(feature) {
 
     if (feature === "deposit") {
 
+        if (typeof supabaseClient === "undefined") {
+            alert("Supabase connection is not available.");
+            return;
+        }
+
+        const {
+            data: {
+                user
+            },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+        if (userError || !user) {
+            alert("Please log in again.");
+            return;
+        }
+
+        const phone = prompt(
+            "Enter your M-Pesa phone number:"
+        );
+
+        if (!phone) {
+            return;
+        }
+
+        const amountInput = prompt(
+            "Enter deposit amount:"
+        );
+
+        const amount = Number(amountInput);
+
+        if (!amount || amount <= 0) {
+            alert("Please enter a valid amount.");
+            return;
+        }
+
+        try {
+
+            const {
+                error
+            } = await supabaseClient
+                .from("deposits")
+                .insert({
+
+                    user_id: user.id,
+
+                    amount: amount,
+
+                    phone: phone,
+
+                    status: "pending"
+
+                });
+
+            if (error) {
+
+                console.error(error);
+
+                alert(
+                    "Deposit request failed: " +
+                    error.message
+                );
+
+                return;
+            }
+
+            alert(
+                "Deposit request submitted successfully.\n\n" +
+                "Amount: $" +
+                amount.toFixed(2) +
+                "\n" +
+                "Status: Pending"
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Unable to submit deposit request: " +
+                error.message
+            );
+
+        }
+
+        return;
+    }
+
+
+    if (feature === "withdraw") {
+
+        alert(
+            "Withdrawals are not available yet."
+        );
+
+        return;
+    }
+
+}
+
+    if (feature === "deposit") {
+
         const phone = prompt(
             "Enter your M-Pesa phone number:"
         );
