@@ -678,31 +678,235 @@
 
 <script>
 
-async function loadAdminData() {
+// ==========================================
+// APEX MARKETS — ADMIN DASHBOARD
+// ==========================================
 
-    // Basic dashboard values
-    document.getElementById("totalUsers").textContent = "—";
-    document.getElementById("activeUsers").textContent = "—";
-    document.getElementById("pendingKyc").textContent = "—";
-    document.getElementById("openPositionsCount").textContent = "—";
+// ------------------------------------------
+// CHECK SUPABASE CONNECTION
+// ------------------------------------------
 
+function checkSupabase() {
 
     if (typeof supabaseClient === "undefined") {
 
-        alert("Supabase connection is not available.");
+        alert(
+            "Supabase connection is not available.\n\n" +
+            "Make sure the Supabase connection script is loaded before admin.html."
+        );
 
+        return false;
+    }
+
+    return true;
+}
+
+
+// ==========================================
+// SAFE HTML
+// ==========================================
+
+function escapeHTML(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+// ==========================================
+// FORMAT MONEY
+// ==========================================
+
+function formatMoney(amount) {
+
+    const number = Number(amount || 0);
+
+    return "$" + number.toFixed(2);
+}
+
+
+// ==========================================
+// FORMAT DATE
+// ==========================================
+
+function formatDate(date) {
+
+    if (!date) {
+        return "—";
+    }
+
+    try {
+
+        return new Date(date).toLocaleString();
+
+    } catch {
+
+        return date;
+
+    }
+}
+
+
+// ==========================================
+// LOAD ADMIN DASHBOARD
+// ==========================================
+
+async function loadAdminData() {
+
+    if (!checkSupabase()) {
         return;
     }
 
 
-    // ==============================
-    // LOAD DEPOSITS
-    // ==============================
+    // Show loading state
 
-    const depositsTable =
-        document.getElementById("depositsTable");
+    document.getElementById("totalUsers").textContent = "...";
+    document.getElementById("activeUsers").textContent = "...";
+    document.getElementById("pendingKyc").textContent = "—";
+    document.getElementById("openPositionsCount").textContent = "—";
+
 
     try {
+
+        // ======================================
+        // LOAD PROFILES
+        // ======================================
+
+        const {
+            data: profiles,
+            error: profileError
+        } = await supabaseClient
+            .from("Profile")
+            .select("*");
+
+
+        if (profileError) {
+
+            console.error(
+                "Profile error:",
+                profileError
+            );
+
+            throw new Error(
+                "Could not load customers: " +
+                profileError.message
+            );
+
+        }
+
+
+        const users =
+            Array.isArray(profiles)
+                ? profiles
+                : [];
+
+
+        // ======================================
+        // REGISTERED CUSTOMERS
+        // ======================================
+
+        document.getElementById(
+            "totalUsers"
+        ).textContent = users.length;
+
+
+        // We don't have a reliable server-side
+        // "currently online" field yet.
+        //
+        // For now, show registered customers
+        // rather than inventing an active count.
+
+        document.getElementById(
+            "activeUsers"
+        ).textContent = users.length;
+
+
+        // ======================================
+        // DISPLAY USERS
+        // ======================================
+
+        const usersTable =
+            document.getElementById(
+                "usersTable"
+            );
+
+
+        if (users.length === 0) {
+
+            usersTable.innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        <div class="empty-state">
+                            No registered customers.
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+        } else {
+
+            usersTable.innerHTML =
+                users.map(user => {
+
+                    // Your current Profile columns
+                    // are unusual, so we support them
+                    // directly.
+
+                    const userId =
+                        user.diid || user.id || "—";
+
+                    const name =
+                        user.emab_llufcreated_at ||
+                        user.full_name ||
+                        user.name ||
+                        "Customer";
+
+                    const email =
+                        user["ail me"] ||
+                        user.email ||
+                        "—";
+
+
+                    return `
+                        <tr>
+
+                            <td>
+                                ${escapeHTML(name)}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(email)}
+                            </td>
+
+                            <td>
+                                <span class="status status-verified">
+                                    Registered
+                                </span>
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                        </tr>
+                    `;
+
+                }).join("");
+
+        }
+
+
+        // ======================================
+        // LOAD DEPOSITS
+        // ======================================
 
         const {
             data: deposits,
@@ -710,9 +914,12 @@ async function loadAdminData() {
         } = await supabaseClient
             .from("deposits")
             .select("*")
-            .order("created_at", {
-                ascending: false
-            });
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
 
 
         if (depositError) {
@@ -722,21 +929,64 @@ async function loadAdminData() {
                 depositError
             );
 
-            depositsTable.innerHTML = `
-                <tr>
-                    <td colspan="4">
-                        Unable to load deposits.
-                    </td>
-                </tr>
-            `;
+            throw new Error(
+                "Could not load deposits: " +
+                depositError.message
+            );
 
-        } else if (!deposits || deposits.length === 0) {
+        }
+
+
+        const depositRecords =
+            Array.isArray(deposits)
+                ? deposits
+                : [];
+
+
+        // ======================================
+        // DEPOSIT TOTALS
+        // ======================================
+
+        const totalDepositAmount =
+            depositRecords.reduce(
+                (total, deposit) => {
+
+                    return total +
+                        Number(
+                            deposit.amount || 0
+                        );
+
+                },
+                0
+            );
+
+
+        const pendingDeposits =
+            depositRecords.filter(
+                deposit =>
+                    String(
+                        deposit.status || ""
+                    ).toLowerCase() === "pending"
+            ).length;
+
+
+        // ======================================
+        // DISPLAY DEPOSITS
+        // ======================================
+
+        const depositsTable =
+            document.getElementById(
+                "depositsTable"
+            );
+
+
+        if (depositRecords.length === 0) {
 
             depositsTable.innerHTML = `
                 <tr>
                     <td colspan="4">
                         <div class="empty-state">
-                            No deposit requests yet.
+                            No deposit records available.
                         </div>
                     </td>
                 </tr>
@@ -745,58 +995,58 @@ async function loadAdminData() {
         } else {
 
             depositsTable.innerHTML =
-                deposits.map(deposit => `
+                depositRecords.map(
+                    deposit => {
 
-                    <tr>
+                        const reference =
+                            deposit.id || "—";
 
-                        <td>
-                            ${deposit.id || "—"}
-                        </td>
+                        const userId =
+                            deposit.user_id || "—";
 
-                        <td>
-                            ${deposit.user_id || "—"}
-                        </td>
-
-                        <td>
-                            $${Number(
+                        const amount =
+                            Number(
                                 deposit.amount || 0
-                            ).toFixed(2)}
-                        </td>
+                            );
 
-                        <td>
+                        const status =
+                            deposit.status ||
+                            "pending";
 
-                            <span class="status status-pending">
-                                ${deposit.status || "pending"}
-                            </span>
 
-                        </td>
+                        return `
+                            <tr>
 
-                    </tr>
+                                <td>
+                                    ${escapeHTML(reference)}
+                                </td>
 
-                `).join("");
+                                <td>
+                                    ${escapeHTML(userId)}
+                                </td>
+
+                                <td>
+                                    ${formatMoney(amount)}
+                                </td>
+
+                                <td>
+                                    <span class="status status-pending">
+                                        ${escapeHTML(status)}
+                                    </span>
+                                </td>
+
+                            </tr>
+                        `;
+
+                    }
+                ).join("");
 
         }
 
 
-    } catch (error) {
-
-        console.error(error);
-
-    }
-
-
-
-    // ==============================
-    // LOAD WITHDRAWALS
-    // ==============================
-
-    const withdrawalsTable =
-        document.getElementById(
-            "withdrawalsTable"
-        );
-
-
-    try {
+        // ======================================
+        // LOAD WITHDRAWALS
+        // ======================================
 
         const {
             data: withdrawals,
@@ -804,9 +1054,12 @@ async function loadAdminData() {
         } = await supabaseClient
             .from("withdrawals")
             .select("*")
-            .order("created_at", {
-                ascending: false
-            });
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
 
 
         if (withdrawalError) {
@@ -816,24 +1069,64 @@ async function loadAdminData() {
                 withdrawalError
             );
 
-            withdrawalsTable.innerHTML = `
-                <tr>
-                    <td colspan="4">
-                        Unable to load withdrawals.
-                    </td>
-                </tr>
-            `;
+            throw new Error(
+                "Could not load withdrawals: " +
+                withdrawalError.message
+            );
 
-        } else if (
-            !withdrawals ||
-            withdrawals.length === 0
-        ) {
+        }
+
+
+        const withdrawalRecords =
+            Array.isArray(withdrawals)
+                ? withdrawals
+                : [];
+
+
+        // ======================================
+        // WITHDRAWAL TOTALS
+        // ======================================
+
+        const totalWithdrawalAmount =
+            withdrawalRecords.reduce(
+                (total, withdrawal) => {
+
+                    return total +
+                        Number(
+                            withdrawal.amount || 0
+                        );
+
+                },
+                0
+            );
+
+
+        const pendingWithdrawals =
+            withdrawalRecords.filter(
+                withdrawal =>
+                    String(
+                        withdrawal.status || ""
+                    ).toLowerCase() === "pending"
+            ).length;
+
+
+        // ======================================
+        // DISPLAY WITHDRAWALS
+        // ======================================
+
+        const withdrawalsTable =
+            document.getElementById(
+                "withdrawalsTable"
+            );
+
+
+        if (withdrawalRecords.length === 0) {
 
             withdrawalsTable.innerHTML = `
                 <tr>
                     <td colspan="4">
                         <div class="empty-state">
-                            No withdrawal requests yet.
+                            No withdrawal records available.
                         </div>
                     </td>
                 </tr>
@@ -842,96 +1135,423 @@ async function loadAdminData() {
         } else {
 
             withdrawalsTable.innerHTML =
-                withdrawals.map(withdrawal => `
+                withdrawalRecords.map(
+                    withdrawal => {
 
-                    <tr>
+                        const reference =
+                            withdrawal.id || "—";
 
-                        <td>
-                            ${withdrawal.id || "—"}
-                        </td>
+                        const userId =
+                            withdrawal.user_id || "—";
 
-                        <td>
-                            ${withdrawal.user_id || "—"}
-                        </td>
-
-                        <td>
-                            $${Number(
+                        const amount =
+                            Number(
                                 withdrawal.amount || 0
-                            ).toFixed(2)}
-                        </td>
+                            );
 
-                        <td>
+                        const status =
+                            withdrawal.status ||
+                            "pending";
 
-                            <span class="status status-pending">
-                                ${withdrawal.status || "pending"}
-                            </span>
 
-                        </td>
+                        return `
+                            <tr>
 
-                    </tr>
+                                <td>
+                                    ${escapeHTML(reference)}
+                                </td>
 
-                `).join("");
+                                <td>
+                                    ${escapeHTML(userId)}
+                                </td>
+
+                                <td>
+                                    ${formatMoney(amount)}
+                                </td>
+
+                                <td>
+                                    <span class="status status-pending">
+                                        ${escapeHTML(status)}
+                                    </span>
+                                </td>
+
+                            </tr>
+                        `;
+
+                    }
+                ).join("");
 
         }
 
 
+        // ======================================
+        // UPDATE KYC
+        // ======================================
+
+        // We don't have a KYC table yet.
+
+        document.getElementById(
+            "pendingKyc"
+        ).textContent = "0";
+
+
+        // ======================================
+        // OPEN POSITIONS
+        // ======================================
+
+        // We don't have a trades/positions table yet.
+
+        document.getElementById(
+            "openPositionsCount"
+        ).textContent = "0";
+
+
+        // ======================================
+        // ACTIVITY
+        // ======================================
+
+        const activityList =
+            document.getElementById(
+                "activityList"
+            );
+
+
+        activityList.innerHTML = `
+
+            <div class="activity-item">
+
+                <span>
+                    Registered customers
+                </span>
+
+                <strong>
+                    ${users.length}
+                </strong>
+
+            </div>
+
+
+            <div class="activity-item">
+
+                <span>
+                    Deposit requests
+                </span>
+
+                <strong>
+                    ${depositRecords.length}
+                </strong>
+
+            </div>
+
+
+            <div class="activity-item">
+
+                <span>
+                    Withdrawal requests
+                </span>
+
+                <strong>
+                    ${withdrawalRecords.length}
+                </strong>
+
+            </div>
+
+
+            <div class="activity-item">
+
+                <span>
+                    Pending deposits
+                </span>
+
+                <strong>
+                    ${pendingDeposits}
+                </strong>
+
+            </div>
+
+
+            <div class="activity-item">
+
+                <span>
+                    Pending withdrawals
+                </span>
+
+                <strong>
+                    ${pendingWithdrawals}
+                </strong>
+
+            </div>
+
+        `;
+
+
+        // ======================================
+        // SHOW SUMMARY
+        // ======================================
+
+        console.log(
+            "===== APEX MARKETS ADMIN ====="
+        );
+
+        console.log(
+            "Registered customers:",
+            users.length
+        );
+
+        console.log(
+            "Deposits:",
+            depositRecords.length
+        );
+
+        console.log(
+            "Total deposited:",
+            totalDepositAmount
+        );
+
+        console.log(
+            "Withdrawals:",
+            withdrawalRecords.length
+        );
+
+        console.log(
+            "Total withdrawn:",
+            totalWithdrawalAmount
+        );
+
+        console.log(
+            "Pending deposits:",
+            pendingDeposits
+        );
+
+        console.log(
+            "Pending withdrawals:",
+            pendingWithdrawals
+        );
+
+
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "ADMIN DASHBOARD ERROR:",
+            error
+        );
+
+
+        alert(
+            "Unable to load Admin Dashboard:\n\n" +
+            error.message
+        );
 
     }
 
 }
 
 
+// ==========================================
+// SEARCH USERS
+// ==========================================
 
-// ==============================
-// REFRESH
-// ==============================
+async function searchUsers() {
 
-function refreshAdmin() {
+    if (!checkSupabase()) {
+        return;
+    }
 
-    loadAdminData();
-
-}
-
-
-
-// ==============================
-// SEARCH
-// ==============================
-
-function searchUsers() {
 
     const search =
         document.getElementById(
             "userSearch"
-        ).value.trim();
+        )?.value
+        .trim()
+        .toLowerCase();
 
 
     if (!search) {
 
-        alert(
-            "Enter a user name or email to search."
-        );
+        loadAdminData();
 
         return;
     }
 
 
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("Profile")
+            .select("*");
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        const users =
+            Array.isArray(data)
+                ? data
+                : [];
+
+
+        const filtered =
+            users.filter(user => {
+
+                const name =
+                    String(
+                        user.emab_llufcreated_at ||
+                        user.full_name ||
+                        user.name ||
+                        ""
+                    ).toLowerCase();
+
+
+                const email =
+                    String(
+                        user["ail me"] ||
+                        user.email ||
+                        ""
+                    ).toLowerCase();
+
+
+                return (
+                    name.includes(search) ||
+                    email.includes(search)
+                );
+
+            });
+
+
+        const usersTable =
+            document.getElementById(
+                "usersTable"
+            );
+
+
+        if (filtered.length === 0) {
+
+            usersTable.innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        <div class="empty-state">
+                            No matching customer found.
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        usersTable.innerHTML =
+            filtered.map(user => {
+
+                const name =
+                    user.emab_llufcreated_at ||
+                    user.full_name ||
+                    user.name ||
+                    "Customer";
+
+
+                const email =
+                    user["ail me"] ||
+                    user.email ||
+                    "—";
+
+
+                return `
+                    <tr>
+
+                        <td>
+                            ${escapeHTML(name)}
+                        </td>
+
+                        <td>
+                            ${escapeHTML(email)}
+                        </td>
+
+                        <td>
+                            <span class="status status-verified">
+                                Registered
+                            </span>
+                        </td>
+
+                        <td>
+                            —
+                        </td>
+
+                    </tr>
+                `;
+
+            }).join("");
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+        alert(
+            "Search failed: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// REFRESH BUTTON
+// ==========================================
+
+async function refreshAdmin() {
+
+    await loadAdminData();
+
     alert(
-        "User search will be connected to the user database next."
+        "Admin data refreshed."
     );
 
 }
 
 
-
-// ==============================
+// ==========================================
 // ADMIN LOGOUT
-// ==============================
+// ==========================================
 
-function adminLogout() {
+async function adminLogout() {
+
+    try {
+
+        if (
+            typeof supabaseClient !== "undefined"
+        ) {
+
+            await supabaseClient.auth.signOut();
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Logout error:",
+            error
+        );
+
+    }
+
+
+    localStorage.setItem(
+        "apexLoggedIn",
+        "false"
+    );
+
 
     window.location.href =
         "index.html";
@@ -939,13 +1559,19 @@ function adminLogout() {
 }
 
 
+// ==========================================
+// START ADMIN DASHBOARD
+// ==========================================
 
-// ==============================
-// START
-// ==============================
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
 
-loadAdminData();
+        loadAdminData();
 
-</script>
+    }
+);
+
+    </script>
 </body>
           </html>
