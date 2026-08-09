@@ -671,85 +671,281 @@
 </footer>
 
 
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="script.js"></script>
+
 <script>
 
-    /*
-     * ADMIN INTERFACE
-     *
-     * This page does not process real money.
-     * Real customer data should later come from
-     * a secure backend/database.
-     */
+async function loadAdminData() {
+
+    // Basic dashboard values
+    document.getElementById("totalUsers").textContent = "—";
+    document.getElementById("activeUsers").textContent = "—";
+    document.getElementById("pendingKyc").textContent = "—";
+    document.getElementById("openPositionsCount").textContent = "—";
 
 
-    function refreshAdmin() {
+    if (typeof supabaseClient === "undefined") {
 
-        loadAdminData();
+        alert("Supabase connection is not available.");
 
-        alert("Admin data refreshed.");
-
+        return;
     }
 
 
-    function loadAdminData() {
+    // ==============================
+    // LOAD DEPOSITS
+    // ==============================
 
-        /*
-         * We deliberately do not invent customer
-         * balances or transactions.
-         */
+    const depositsTable =
+        document.getElementById("depositsTable");
 
-        document.getElementById(
-            "totalUsers"
-        ).textContent = "—";
+    try {
 
-        document.getElementById(
-            "activeUsers"
-        ).textContent = "—";
-
-        document.getElementById(
-            "pendingKyc"
-        ).textContent = "—";
-
-        document.getElementById(
-            "openPositionsCount"
-        ).textContent = "—";
-
-    }
+        const {
+            data: deposits,
+            error: depositError
+        } = await supabaseClient
+            .from("deposits")
+            .select("*")
+            .order("created_at", {
+                ascending: false
+            });
 
 
-    function searchUsers() {
+        if (depositError) {
 
-        const search =
-            document.getElementById(
-                "userSearch"
-            ).value.trim();
+            console.error(
+                "Deposit error:",
+                depositError
+            );
 
-        if (!search) {
+            depositsTable.innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        Unable to load deposits.
+                    </td>
+                </tr>
+            `;
 
-            alert("Enter a user name or email to search.");
+        } else if (!deposits || deposits.length === 0) {
 
-            return;
+            depositsTable.innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        <div class="empty-state">
+                            No deposit requests yet.
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+        } else {
+
+            depositsTable.innerHTML =
+                deposits.map(deposit => `
+
+                    <tr>
+
+                        <td>
+                            ${deposit.id || "—"}
+                        </td>
+
+                        <td>
+                            ${deposit.user_id || "—"}
+                        </td>
+
+                        <td>
+                            $${Number(
+                                deposit.amount || 0
+                            ).toFixed(2)}
+                        </td>
+
+                        <td>
+
+                            <span class="status status-pending">
+                                ${deposit.status || "pending"}
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                `).join("");
 
         }
 
-        alert(
-            "User search will be connected to the secure database when the backend is added."
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+
+
+    // ==============================
+    // LOAD WITHDRAWALS
+    // ==============================
+
+    const withdrawalsTable =
+        document.getElementById(
+            "withdrawalsTable"
         );
 
+
+    try {
+
+        const {
+            data: withdrawals,
+            error: withdrawalError
+        } = await supabaseClient
+            .from("withdrawals")
+            .select("*")
+            .order("created_at", {
+                ascending: false
+            });
+
+
+        if (withdrawalError) {
+
+            console.error(
+                "Withdrawal error:",
+                withdrawalError
+            );
+
+            withdrawalsTable.innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        Unable to load withdrawals.
+                    </td>
+                </tr>
+            `;
+
+        } else if (
+            !withdrawals ||
+            withdrawals.length === 0
+        ) {
+
+            withdrawalsTable.innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        <div class="empty-state">
+                            No withdrawal requests yet.
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+        } else {
+
+            withdrawalsTable.innerHTML =
+                withdrawals.map(withdrawal => `
+
+                    <tr>
+
+                        <td>
+                            ${withdrawal.id || "—"}
+                        </td>
+
+                        <td>
+                            ${withdrawal.user_id || "—"}
+                        </td>
+
+                        <td>
+                            $${Number(
+                                withdrawal.amount || 0
+                            ).toFixed(2)}
+                        </td>
+
+                        <td>
+
+                            <span class="status status-pending">
+                                ${withdrawal.status || "pending"}
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                `).join("");
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
     }
 
+}
 
-    function adminLogout() {
 
-        window.location.href =
-            "index.html";
 
-    }
+// ==============================
+// REFRESH
+// ==============================
 
+function refreshAdmin() {
 
     loadAdminData();
-loadAdminDashboard();
-</script>
 
+}
+
+
+
+// ==============================
+// SEARCH
+// ==============================
+
+function searchUsers() {
+
+    const search =
+        document.getElementById(
+            "userSearch"
+        ).value.trim();
+
+
+    if (!search) {
+
+        alert(
+            "Enter a user name or email to search."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "User search will be connected to the user database next."
+    );
+
+}
+
+
+
+// ==============================
+// ADMIN LOGOUT
+// ==============================
+
+function adminLogout() {
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+
+// ==============================
+// START
+// ==============================
+
+loadAdminData();
+
+</script>
 </body>
           </html>
