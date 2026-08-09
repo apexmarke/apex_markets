@@ -676,6 +676,7 @@
 <script src="supabase.js"></script>
 <script src="script.js"></script>
 
+
 <script>
 
 // ==========================================
@@ -685,52 +686,52 @@
 async function loadAdminData() {
 
     if (typeof supabaseClient === "undefined") {
-        console.error("Supabase connection not available.");
+        console.error("Supabase is not connected.");
         return;
     }
 
-    // Loading state
+    // Loading
     document.getElementById("totalUsers").textContent = "...";
     document.getElementById("activeUsers").textContent = "...";
     document.getElementById("pendingKyc").textContent = "0";
     document.getElementById("openPositionsCount").textContent = "0";
 
-
     try {
 
-        // ==========================================
-        // USERS / PROFILES
-        // ==========================================
+        // ======================================
+        // 1. USERS
+        // ======================================
 
         const {
-            data: profiles,
-            error: profileError
+            data: users,
+            error: usersError
         } = await supabaseClient
             .from("Profile")
             .select("*");
 
-        if (profileError) {
-            throw profileError;
+        if (usersError) {
+            throw usersError;
         }
 
-        const users = profiles || [];
+        const userList = users || [];
 
         document.getElementById("totalUsers").textContent =
-            users.length;
+            userList.length;
 
-        // For now registered users are displayed.
+        // We currently don't have a server-side
+        // online-status system.
         document.getElementById("activeUsers").textContent =
-            users.length;
+            userList.length;
 
 
-        // ==========================================
+        // ======================================
         // USERS TABLE
-        // ==========================================
+        // ======================================
 
         const usersTable =
             document.getElementById("usersTable");
 
-        if (users.length === 0) {
+        if (userList.length === 0) {
 
             usersTable.innerHTML = `
                 <tr>
@@ -744,51 +745,52 @@ async function loadAdminData() {
 
         } else {
 
-            usersTable.innerHTML = users.map(user => {
+            usersTable.innerHTML =
+                userList.map(user => {
 
-                const name =
-                    user.full_name ||
-                    user.name ||
-                    "Customer";
+                    const name =
+                        user.full_name ||
+                        user.name ||
+                        "Customer";
 
-                const email =
-                    user.email ||
-                    "—";
+                    const email =
+                        user.email ||
+                        "—";
 
-                const balance =
-                    Number(user.balance || 0);
+                    const balance =
+                        Number(user.balance || 0);
 
-                return `
-                    <tr>
+                    return `
+                        <tr>
 
-                        <td>
-                            ${escapeHTML(name)}
-                        </td>
+                            <td>
+                                ${escapeHTML(name)}
+                            </td>
 
-                        <td>
-                            ${escapeHTML(email)}
-                        </td>
+                            <td>
+                                ${escapeHTML(email)}
+                            </td>
 
-                        <td>
-                            <span class="status status-verified">
-                                Registered
-                            </span>
-                        </td>
+                            <td>
+                                <span class="status status-verified">
+                                    Registered
+                                </span>
+                            </td>
 
-                        <td>
-                            $${balance.toFixed(2)}
-                        </td>
+                            <td>
+                                $${balance.toFixed(2)}
+                            </td>
 
-                    </tr>
-                `;
+                        </tr>
+                    `;
 
-            }).join("");
+                }).join("");
         }
 
 
-        // ==========================================
-        // DEPOSITS
-        // ==========================================
+        // ======================================
+        // 2. DEPOSITS
+        // ======================================
 
         const {
             data: deposits,
@@ -801,19 +803,36 @@ async function loadAdminData() {
             });
 
         if (depositsError) {
-            console.error(
-                "Deposits error:",
-                depositsError
-            );
+            throw depositsError;
         }
 
         const depositList =
             deposits || [];
 
-        const depositsTable =
-            document.getElementById(
-                "depositsTable"
+
+        // Total deposited
+        const totalDeposited =
+            depositList.reduce(
+                (total, item) =>
+                    total + Number(item.amount || 0),
+                0
             );
+
+
+        // Pending deposits
+        const pendingDeposits =
+            depositList.filter(item =>
+                String(item.status || "")
+                    .toLowerCase() === "pending"
+            ).length;
+
+
+        // ======================================
+        // DEPOSIT TABLE
+        // ======================================
+
+        const depositsTable =
+            document.getElementById("depositsTable");
 
         if (depositList.length === 0) {
 
@@ -830,33 +849,33 @@ async function loadAdminData() {
         } else {
 
             depositsTable.innerHTML =
-                depositList.map(deposit => {
+                depositList.map(item => {
 
                     return `
                         <tr>
 
                             <td>
                                 ${escapeHTML(
-                                    deposit.id || "—"
+                                    item.id || "—"
                                 )}
                             </td>
 
                             <td>
                                 ${escapeHTML(
-                                    deposit.user_id || "—"
+                                    item.user_id || "—"
                                 )}
                             </td>
 
                             <td>
                                 $${Number(
-                                    deposit.amount || 0
+                                    item.amount || 0
                                 ).toFixed(2)}
                             </td>
 
                             <td>
                                 <span class="status status-pending">
                                     ${escapeHTML(
-                                        deposit.status || "pending"
+                                        item.status || "pending"
                                     )}
                                 </span>
                             </td>
@@ -868,9 +887,9 @@ async function loadAdminData() {
         }
 
 
-        // ==========================================
-        // WITHDRAWALS
-        // ==========================================
+        // ======================================
+        // 3. WITHDRAWALS
+        // ======================================
 
         const {
             data: withdrawals,
@@ -883,16 +902,33 @@ async function loadAdminData() {
             });
 
         if (withdrawalsError) {
-
-            console.error(
-                "Withdrawals error:",
-                withdrawalsError
-            );
-
+            throw withdrawalsError;
         }
 
         const withdrawalList =
             withdrawals || [];
+
+
+        // Total withdrawn
+        const totalWithdrawn =
+            withdrawalList.reduce(
+                (total, item) =>
+                    total + Number(item.amount || 0),
+                0
+            );
+
+
+        // Pending withdrawals
+        const pendingWithdrawals =
+            withdrawalList.filter(item =>
+                String(item.status || "")
+                    .toLowerCase() === "pending"
+            ).length;
+
+
+        // ======================================
+        // WITHDRAWAL TABLE
+        // ======================================
 
         const withdrawalsTable =
             document.getElementById(
@@ -914,33 +950,33 @@ async function loadAdminData() {
         } else {
 
             withdrawalsTable.innerHTML =
-                withdrawalList.map(withdrawal => {
+                withdrawalList.map(item => {
 
                     return `
                         <tr>
 
                             <td>
                                 ${escapeHTML(
-                                    withdrawal.id || "—"
+                                    item.id || "—"
                                 )}
                             </td>
 
                             <td>
                                 ${escapeHTML(
-                                    withdrawal.user_id || "—"
+                                    item.user_id || "—"
                                 )}
                             </td>
 
                             <td>
                                 $${Number(
-                                    withdrawal.amount || 0
+                                    item.amount || 0
                                 ).toFixed(2)}
                             </td>
 
                             <td>
                                 <span class="status status-pending">
                                     ${escapeHTML(
-                                        withdrawal.status || "pending"
+                                        item.status || "pending"
                                     )}
                                 </span>
                             </td>
@@ -952,30 +988,9 @@ async function loadAdminData() {
         }
 
 
-        // ==========================================
-        // TRANSACTIONS
-        // ==========================================
-
-        const transactionsTable =
-            document.getElementById(
-                "transactionsTable"
-            );
-
-        transactionsTable.innerHTML = `
-            <tr>
-                <td colspan="5">
-                    <div class="empty-state">
-                        Transaction tracking will appear here
-                        when transaction records are connected.
-                    </div>
-                </td>
-            </tr>
-        `;
-
-
-        // ==========================================
+        // ======================================
         // ACTIVITY
-        // ==========================================
+        // ======================================
 
         const activityList =
             document.getElementById(
@@ -983,13 +998,14 @@ async function loadAdminData() {
             );
 
         activityList.innerHTML = `
+
             <div class="activity-item">
                 <span>
-                    ${users.length}
+                    ${userList.length}
                     registered customer(s)
                 </span>
                 <small>
-                    Database
+                    Customers
                 </small>
             </div>
 
@@ -999,7 +1015,7 @@ async function loadAdminData() {
                     deposit request(s)
                 </span>
                 <small>
-                    Database
+                    ${formatMoney(totalDeposited)}
                 </small>
             </div>
 
@@ -1009,15 +1025,62 @@ async function loadAdminData() {
                     withdrawal request(s)
                 </span>
                 <small>
-                    Database
+                    ${formatMoney(totalWithdrawn)}
                 </small>
             </div>
+
+            <div class="activity-item">
+                <span>
+                    ${pendingDeposits}
+                    pending deposit(s)
+                </span>
+                <small>
+                    Awaiting review
+                </small>
+            </div>
+
+            <div class="activity-item">
+                <span>
+                    ${pendingWithdrawals}
+                    pending withdrawal(s)
+                </span>
+                <small>
+                    Awaiting review
+                </small>
+            </div>
+
         `;
 
 
+        // ======================================
+        // SHOW FINANCIAL SUMMARY
+        // ======================================
+
         console.log(
-            "Admin dashboard loaded successfully."
+            "Total customers:",
+            userList.length
         );
+
+        console.log(
+            "Total deposited:",
+            totalDeposited
+        );
+
+        console.log(
+            "Total withdrawn:",
+            totalWithdrawn
+        );
+
+        console.log(
+            "Pending deposits:",
+            pendingDeposits
+        );
+
+        console.log(
+            "Pending withdrawals:",
+            pendingWithdrawals
+        );
+
 
     } catch (error) {
 
@@ -1026,24 +1089,30 @@ async function loadAdminData() {
             error
         );
 
-        document.getElementById(
-            "totalUsers"
-        ).textContent = "Error";
-
-        document.getElementById(
-            "activeUsers"
-        ).textContent = "Error";
-
         alert(
-            "Could not load admin data:\n\n" +
+            "Unable to load admin data:\n\n" +
             error.message
         );
+
     }
+
 }
 
 
 // ==========================================
-// ESCAPE HTML
+// MONEY FORMAT
+// ==========================================
+
+function formatMoney(amount) {
+
+    return "$" +
+        Number(amount || 0).toFixed(2);
+
+}
+
+
+// ==========================================
+// SAFE HTML
 // ==========================================
 
 function escapeHTML(value) {
@@ -1061,6 +1130,7 @@ function escapeHTML(value) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+
 }
 
 
@@ -1081,12 +1151,15 @@ function refreshAdmin() {
 
 function searchUsers() {
 
-    const search =
+    const input =
         document.getElementById(
             "userSearch"
-        ).value
-        .trim()
-        .toLowerCase();
+        );
+
+    const search =
+        input.value
+            .trim()
+            .toLowerCase();
 
     const rows =
         document.querySelectorAll(
@@ -1151,4 +1224,7 @@ document.addEventListener(
     }
 );
 
-            </script>
+    </script>
+
+</body>
+</html>
