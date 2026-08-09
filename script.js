@@ -1527,4 +1527,545 @@ document.addEventListener(
         loadAdminDashboard();
 
     }
-);
+);// ================================
+// APEX MARKETS - TRADING CHART
+// ================================
+
+let chartData = [];
+let chartCanvas;
+let chartCtx;
+let chartTimer;
+
+function createTradingChart() {
+
+    chartCanvas = document.getElementById("tradingChart");
+
+    if (!chartCanvas) return;
+
+    chartCtx = chartCanvas.getContext("2d");
+
+    // Starting BTC/USD price
+    let price = 118500;
+
+    chartData = [];
+
+    // Create initial chart history
+    for (let i = 0; i < 60; i++) {
+
+        price += (Math.random() - 0.48) * 900;
+
+        chartData.push({
+            price: price,
+            time: new Date(Date.now() - (60 - i) * 10000)
+        });
+
+    }
+
+    resizeTradingChart();
+
+    window.addEventListener(
+        "resize",
+        resizeTradingChart
+    );
+
+    // Draw immediately
+    drawTradingChart();
+
+    // Simulated live movement
+    clearInterval(chartTimer);
+
+    chartTimer = setInterval(
+        updateTradingChart,
+        2000
+    );
+}
+
+
+// ================================
+// RESIZE CHART
+// ================================
+
+function resizeTradingChart() {
+
+    if (!chartCanvas) return;
+
+    const rect =
+        chartCanvas.getBoundingClientRect();
+
+    const dpr =
+        window.devicePixelRatio || 1;
+
+    chartCanvas.width =
+        rect.width * dpr;
+
+    chartCanvas.height =
+        rect.height * dpr;
+
+    chartCtx.setTransform(
+        dpr,
+        0,
+        0,
+        dpr,
+        0,
+        0
+    );
+
+    drawTradingChart();
+}
+
+
+// ================================
+// UPDATE CHART
+// ================================
+
+function updateTradingChart() {
+
+    if (!chartData.length) return;
+
+    const last =
+        chartData[chartData.length - 1].price;
+
+    // Small simulated price movement
+    const movement =
+        (Math.random() - 0.48) * 1000;
+
+    const newPrice =
+        Math.max(
+            1000,
+            last + movement
+        );
+
+    chartData.push({
+
+        price: newPrice,
+
+        time: new Date()
+
+    });
+
+    // Keep the chart at 60 candles/points
+    if (chartData.length > 60) {
+
+        chartData.shift();
+
+    }
+
+    drawTradingChart();
+}
+
+
+// ================================
+// DRAW CHART
+// ================================
+
+function drawTradingChart() {
+
+    if (!chartCanvas || !chartCtx) return;
+
+    const width =
+        chartCanvas.clientWidth;
+
+    const height =
+        chartCanvas.clientHeight;
+
+    if (!width || !height) return;
+
+    const ctx = chartCtx;
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    // ----------------------------
+    // CHART AREA
+    // ----------------------------
+
+    const left = 10;
+    const right = 65;
+    const top = 15;
+    const bottom = 35;
+
+    const chartWidth =
+        width - left - right;
+
+    const chartHeight =
+        height - top - bottom;
+
+
+    // ----------------------------
+    // BACKGROUND
+    // ----------------------------
+
+    ctx.fillStyle = "#081426";
+
+    ctx.fillRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    // ----------------------------
+    // PRICE RANGE
+    // ----------------------------
+
+    const prices =
+        chartData.map(
+            item => item.price
+        );
+
+    let maxPrice =
+        Math.max(...prices);
+
+    let minPrice =
+        Math.min(...prices);
+
+    const padding =
+        (maxPrice - minPrice) * 0.15 || 1000;
+
+    maxPrice += padding;
+    minPrice -= padding;
+
+
+    // ----------------------------
+    // GRID
+    // ----------------------------
+
+    ctx.strokeStyle =
+        "rgba(120,150,190,0.15)";
+
+    ctx.lineWidth = 1;
+
+    const gridLines = 6;
+
+    for (
+        let i = 0;
+        i <= gridLines;
+        i++
+    ) {
+
+        const y =
+            top +
+            (chartHeight / gridLines) * i;
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            left,
+            y
+        );
+
+        ctx.lineTo(
+            left + chartWidth,
+            y
+        );
+
+        ctx.stroke();
+
+
+        // Price labels
+        const price =
+            maxPrice -
+            ((maxPrice - minPrice) /
+                gridLines) * i;
+
+        ctx.fillStyle =
+            "#8fa5bd";
+
+        ctx.font =
+            "11px Arial";
+
+        ctx.textAlign =
+            "left";
+
+        ctx.fillText(
+            "$" + Math.round(price).toLocaleString(),
+            left + chartWidth + 8,
+            y + 4
+        );
+
+    }
+
+
+    // Vertical grid
+    for (
+        let i = 0;
+        i <= 6;
+        i++
+    ) {
+
+        const x =
+            left +
+            (chartWidth / 6) * i;
+
+        ctx.strokeStyle =
+            "rgba(120,150,190,0.10)";
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            x,
+            top
+        );
+
+        ctx.lineTo(
+            x,
+            top + chartHeight
+        );
+
+        ctx.stroke();
+
+    }
+
+
+    // ----------------------------
+    // CONVERT PRICE TO Y
+    // ----------------------------
+
+    function priceToY(price) {
+
+        return (
+            top +
+            (
+                (maxPrice - price) /
+                (maxPrice - minPrice)
+            ) *
+            chartHeight
+        );
+
+    }
+
+
+    // ----------------------------
+    // LINE POINTS
+    // ----------------------------
+
+    const points =
+        chartData.map(
+            (item, index) => {
+
+                const x =
+                    left +
+                    (index /
+                        (chartData.length - 1)) *
+                    chartWidth;
+
+                const y =
+                    priceToY(item.price);
+
+                return {
+                    x: x,
+                    y: y
+                };
+
+            }
+        );
+
+
+    if (points.length < 2) return;
+
+
+    // ----------------------------
+    // FILLED AREA
+    // ----------------------------
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        points[0].x,
+        top + chartHeight
+    );
+
+    points.forEach(
+        point => {
+
+            ctx.lineTo(
+                point.x,
+                point.y
+            );
+
+        }
+    );
+
+    ctx.lineTo(
+        points[points.length - 1].x,
+        top + chartHeight
+    );
+
+    ctx.closePath();
+
+    const gradient =
+        ctx.createLinearGradient(
+            0,
+            top,
+            0,
+            top + chartHeight
+        );
+
+    gradient.addColorStop(
+        0,
+        "rgba(30,144,255,0.35)"
+    );
+
+    gradient.addColorStop(
+        1,
+        "rgba(30,144,255,0.02)"
+    );
+
+    ctx.fillStyle =
+        gradient;
+
+    ctx.fill();
+
+
+    // ----------------------------
+    // MAIN BLUE LINE
+    // ----------------------------
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        points[0].x,
+        points[0].y
+    );
+
+    for (
+        let i = 1;
+        i < points.length;
+        i++
+    ) {
+
+        ctx.lineTo(
+            points[i].x,
+            points[i].y
+        );
+
+    }
+
+    ctx.strokeStyle =
+        "#38bdf8";
+
+    ctx.lineWidth = 3;
+
+    ctx.lineJoin =
+        "round";
+
+    ctx.lineCap =
+        "round";
+
+    ctx.stroke();
+
+
+    // ----------------------------
+    // CURRENT PRICE
+    // ----------------------------
+
+    const lastPoint =
+        points[points.length - 1];
+
+    const currentPrice =
+        chartData[
+            chartData.length - 1
+        ].price;
+
+
+    // Current point
+    ctx.beginPath();
+
+    ctx.arc(
+        lastPoint.x,
+        lastPoint.y,
+        4,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fillStyle =
+        "#38bdf8";
+
+    ctx.fill();
+
+
+    // Current price label
+    ctx.fillStyle =
+        "#38bdf8";
+
+    ctx.fillRect(
+        left + chartWidth + 2,
+        lastPoint.y - 10,
+        60,
+        20
+    );
+
+    ctx.fillStyle =
+        "#00111f";
+
+    ctx.font =
+        "bold 10px Arial";
+
+    ctx.textAlign =
+        "center";
+
+    ctx.fillText(
+        "$" +
+        Math.round(currentPrice)
+            .toLocaleString(),
+        left + chartWidth + 32,
+        lastPoint.y + 3
+    );
+
+
+    // ----------------------------
+    // TIME LABELS
+    // ----------------------------
+
+    ctx.fillStyle =
+        "#71869d";
+
+    ctx.font =
+        "10px Arial";
+
+    ctx.textAlign =
+        "center";
+
+    for (
+        let i = 0;
+        i < 6;
+        i++
+    ) {
+
+        const index =
+            Math.floor(
+                (chartData.length - 1) *
+                (i / 5)
+            );
+
+        const point =
+            points[index];
+
+        const date =
+            chartData[index].time;
+
+        const time =
+            date.toLocaleTimeString(
+                [],
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
+
+        ctx.fillText(
+            time,
+            point.x,
+            height - 10
+        );
+
+    }
+
+        }
