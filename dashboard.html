@@ -3,685 +3,606 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Apex Markets | Trading Dashboard</title>
-
+<title>Apex Markets Dashboard</title>
 <link rel="stylesheet" href="style.css">
 
 <style>
-/* =====================================================
-   APEX MARKETS — PROFESSIONAL DASHBOARD
-===================================================== */
+*{box-sizing:border-box}
 
-:root {
-    --card: rgba(255,255,255,0.055);
-    --border: rgba(255,255,255,0.10);
-    --muted: rgba(255,255,255,0.62);
-    --green: #16c784;
-    --red: #ea3943;
-    --blue: #3861fb;
-}
-
-body {
-    margin: 0;
-}
-
-/* HEADER */
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-}
-
-.logo {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: .3px;
-}
-
-.menu {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-}
-
-.menu a {
-    text-decoration: none;
-}
-
-/* MAIN */
-
-.dashboard {
-    max-width: 1400px;
-    margin: auto;
-}
-
-/* TOP */
-
-.dashboard-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    margin: 25px 0 18px;
-}
-
-.dashboard-title h1 {
-    margin: 0;
-    font-size: 27px;
-}
-
-.dashboard-title p {
-    margin: 7px 0 0;
-    color: var(--muted);
-}
-
-.profile-button {
-    text-decoration: none;
-    padding: 11px 16px;
-    border-radius: 10px;
-    font-weight: 700;
-    border: 1px solid var(--border);
-}
-
-/* MODE */
-
-.mode-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 18px;
-}
-
-.mode-btn {
-    border: 1px solid var(--border);
-    padding: 9px 15px;
-    border-radius: 9px;
-    cursor: pointer;
-    font-weight: 700;
-    background: transparent;
-}
-
-.mode-btn.active {
-    box-shadow: 0 0 0 2px currentColor;
-}
-
-/* ACCOUNT */
-
-.account-summary {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 14px;
-    margin-bottom: 18px;
-}
-
-.summary-card {
-    padding: 18px;
-    border-radius: 15px;
-    border: 1px solid var(--border);
-    background: var(--card);
-}
-
-.summary-card h3 {
-    margin: 0 0 8px;
-    font-size: 13px;
-    color: var(--muted);
-}
-
-.summary-value {
-    margin: 0;
-    font-size: 25px;
-    font-weight: 800;
-}
-
-.positive {
-    color: var(--green);
-}
-
-/* MARKET TERMINAL */
+body{margin:0}
 
-.market-terminal {
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    background: var(--card);
+.dashboard{
+    max-width:1400px;
+    margin:auto;
+    padding:12px;
 }
 
-.market-heading {
-    padding: 17px 18px 10px;
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
 }
 
-.market-heading h2 {
-    margin: 0;
+.logo{
+    font-size:22px;
+    font-weight:bold;
 }
 
-.market-heading p {
-    margin: 5px 0 0;
-    color: var(--muted);
-    font-size: 13px;
+.nav{
+    display:flex;
+    gap:5px;
 }
 
-/* CATEGORIES */
-
-.market-categories {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 12px 18px;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-}
-
-.market-category {
-    flex: 0 0 auto;
-    border: 1px solid var(--border);
-    background: transparent;
-    border-radius: 9px;
-    padding: 10px 14px;
-    cursor: pointer;
-    font-weight: 700;
-}
-
-.market-category.active {
-    background: var(--blue);
-    color: white;
-    border-color: var(--blue);
-}
-
-/* INSTRUMENTS */
-
-.instrument-grid {
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 10px;
-    padding: 15px 18px;
-}
-
-.instrument-card {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 13px;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.instrument-card:hover {
-    transform: translateY(-2px);
-}
-
-.instrument-card.active {
-    border-color: var(--blue);
-    box-shadow: 0 0 0 1px var(--blue);
-}
-
-.instrument-name {
-    font-weight: 700;
-    font-size: 14px;
-}
-
-.instrument-price {
-    font-size: 18px;
-    font-weight: 800;
-    margin-top: 7px;
-}
-
-.instrument-change {
-    font-size: 12px;
-    margin-top: 4px;
-}
-
-/* DIGITS */
-
-.digits-section {
-    display: none;
-    padding: 15px 18px 18px;
-    border-top: 1px solid var(--border);
-}
-
-.digits-section.show {
-    display: block;
-}
-
-.digits-title {
-    margin-bottom: 12px;
-}
-
-.digits-title h3 {
-    margin: 0;
-}
-
-.digits-title p {
-    color: var(--muted);
-    margin: 5px 0;
-    font-size: 13px;
-}
-
-.digits-grid {
-    display: grid;
-    grid-template-columns: repeat(10,1fr);
-    gap: 7px;
+.nav button{
+    border:0;
+    padding:9px 12px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
 }
 
-.digit-card {
-    border: 1px solid var(--border);
-    border-radius: 9px;
-    padding: 9px 3px;
-    text-align: center;
-    cursor: pointer;
-    background: transparent;
+.account{
+    display:flex;
+    gap:8px;
+    margin-bottom:10px;
 }
 
-.digit-card strong {
-    display: block;
-    font-size: 18px;
+.account div{
+    flex:1;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:9px;
 }
 
-.digit-card span {
-    display: block;
-    margin-top: 4px;
-    font-size: 10px;
-    color: var(--muted);
+.account small{
+    display:block;
+    opacity:.6;
+    font-size:10px;
 }
 
-.digit-card.selected {
-    border-color: var(--blue);
-    background: rgba(56,97,251,.15);
+.account strong{
+    font-size:15px;
 }
 
-/* TRADING AREA */
-
-.terminal-grid {
-    display: grid;
-    grid-template-columns: minmax(0,2fr) minmax(280px,1fr);
-    gap: 18px;
-    margin-bottom: 20px;
-}
-
-.panel {
-    border: 1px solid var(--border);
-    border-radius: 15px;
-    padding: 18px;
-    background: var(--card);
-}
-
-.panel h2,
-.panel h3 {
-    margin-top: 0;
+.terminal{
+    display:grid;
+    grid-template-columns:1fr 170px 250px;
+    gap:8px;
 }
 
-/* CHART */
-
-.chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
+.panel{
+    border:1px solid #ccc;
+    border-radius:10px;
+    overflow:hidden;
 }
 
-.chart-market {
-    font-size: 20px;
-    font-weight: 800;
+.chart-head{
+    padding:10px;
+    display:flex;
+    justify-content:space-between;
 }
 
-.chart-price {
-    font-size: 13px;
-    color: var(--muted);
+.chart-head small{
+    opacity:.6;
 }
 
-.chart-box {
-    min-height: 350px;
+.chart{
+    position:relative;
+    height:420px;
+    padding:5px;
 }
 
-#tradingChart {
-    width: 100%;
-    height: 280px;
+#tradingChart{
+    width:100%;
+    height:100%;
 }
 
-/* TRADE PANEL */
-
-.trade-panel {
-    position: relative;
+.digits{
+    position:absolute;
+    left:5px;
+    right:5px;
+    bottom:5px;
+    display:grid;
+    grid-template-columns:repeat(10,1fr);
+    gap:2px;
+    background:rgba(0,0,0,.65);
+    padding:5px;
+    border-radius:7px;
 }
 
-.selected-contract {
-    border: 1px solid var(--border);
-    border-radius: 11px;
-    padding: 12px;
-    margin-bottom: 14px;
+.digit{
+    text-align:center;
+    color:white;
+    padding:3px 0;
+    border-radius:5px;
+    cursor:pointer;
 }
 
-.selected-contract small {
-    display: block;
-    color: var(--muted);
-    margin-bottom: 4px;
+.digit b{
+    display:block;
+    font-size:12px;
 }
 
-.selected-contract strong {
-    font-size: 18px;
+.digit span{
+    font-size:7px;
+    opacity:.8;
 }
 
-.trade-form label {
-    display: block;
-    margin: 14px 0 6px;
-    font-weight: 700;
+.digit.active{
+    background:#3861fb;
 }
 
-.trade-form select,
-.trade-form input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 12px;
-    border-radius: 9px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: inherit;
+.side-title{
+    padding:12px;
+    font-weight:bold;
+    border-bottom:1px solid #ccc;
 }
 
-.payout-box {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-    padding: 12px;
-    border-radius: 9px;
-    background: rgba(22,199,132,.08);
+.volatility{
+    padding:5px;
 }
 
-.order-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 9px;
-    margin-top: 16px;
+.volatility button{
+    width:100%;
+    text-align:left;
+    border:1px solid transparent;
+    background:transparent;
+    padding:12px 9px;
+    margin-bottom:3px;
+    border-radius:7px;
+    cursor:pointer;
 }
 
-.trade-button {
-    border: none;
-    padding: 13px;
-    border-radius: 9px;
-    cursor: pointer;
-    font-weight: 800;
+.volatility button.active{
+    border-color:#3861fb;
+    background:rgba(56,97,251,.1);
 }
 
-.buy-button {
-    background: var(--green);
-    color: white;
+.volatility b{
+    display:flex;
+    justify-content:space-between;
 }
 
-.sell-button {
-    background: var(--red);
-    color: white;
+.volatility small{
+    opacity:.6;
 }
-
-/* QUICK ACTIONS */
 
-.quick-actions {
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 10px;
-    margin-bottom: 20px;
+.trade{
+    padding:12px;
 }
 
-.quick-actions a,
-.quick-actions button {
-    text-align: center;
-    padding: 12px;
-    border-radius: 9px;
-    border: 1px solid var(--border);
-    background: transparent;
-    text-decoration: none;
-    cursor: pointer;
-    font-weight: 700;
+.trade h2{
+    margin-top:0;
 }
 
-/* POSITIONS */
-
-.positions-panel {
-    margin-bottom: 20px;
+.trade label{
+    display:block;
+    margin-top:10px;
+    font-size:11px;
+    font-weight:bold;
 }
 
-.position-row {
-    display: grid;
-    grid-template-columns: 1.4fr .8fr 1fr 1fr auto;
-    gap: 10px;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
+.trade input,
+.trade select{
+    width:100%;
+    padding:10px;
+    margin-top:4px;
+    border-radius:7px;
+    border:1px solid #aaa;
+    background:transparent;
 }
 
-.position-row:last-child {
-    border-bottom: none;
+.payout{
+    margin-top:10px;
+    padding:10px;
+    border-radius:7px;
+    background:rgba(22,163,74,.1);
+    display:flex;
+    justify-content:space-between;
 }
 
-.close-position {
-    border: none;
-    padding: 7px 10px;
-    border-radius: 7px;
-    cursor: pointer;
+.orders{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-top:10px;
 }
 
-/* HISTORY */
-
-.history-row {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr 1fr 1fr;
-    gap: 10px;
-    padding: 11px 0;
-    border-bottom: 1px solid var(--border);
+.orders button{
+    border:0;
+    padding:12px;
+    border-radius:7px;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-/* REAL ACCOUNT */
+.rise{background:#16a34a}
+.fall{background:#dc2626}
 
-.real-account {
-    display: none;
-    margin-bottom: 18px;
-    padding: 18px;
-    border-radius: 14px;
-    border: 1px solid rgba(220,38,38,.4);
+.bottom{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:8px;
 }
 
-.real-badge {
-    font-size: 12px;
-    font-weight: 800;
+.bottom .panel{
+    padding:12px;
 }
 
-.real-actions {
-    display: flex;
-    gap: 10px;
-    margin: 15px 0;
+.actions{
+    display:flex;
+    gap:6px;
+    margin-top:10px;
 }
 
-.security-box,
-.transaction-box {
-    margin-top: 15px;
+.actions button{
+    flex:1;
+    padding:9px;
+    border:1px solid #ccc;
+    border-radius:7px;
+    background:transparent;
 }
-
-/* MOBILE */
 
-@media (max-width:900px) {
+@media(max-width:800px){
 
-    .instrument-grid {
-        grid-template-columns: repeat(3,1fr);
+    .terminal{
+        grid-template-columns:1fr;
     }
 
-    .digits-grid {
-        grid-template-columns: repeat(5,1fr);
+    .chart{
+        height:340px;
     }
 
-    .terminal-grid {
-        grid-template-columns: 1fr;
+    .volatility{
+        display:grid;
+        grid-template-columns:repeat(5,1fr);
+        gap:3px;
     }
+
+    .volatility button{
+        text-align:center;
+        padding:8px 2px;
+    }
+
+    .volatility b{
+        display:block;
+        font-size:10px;
+    }
+
+    .volatility small{
+        font-size:8px;
+    }
+
 }
 
-@media (max-width:600px) {
+@media(max-width:500px){
 
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
+    .account{
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
     }
 
-    .menu {
-        width: 100%;
-        overflow-x: auto;
+    .account div:first-child{
+        grid-column:span 3;
     }
 
-    .dashboard-title h1 {
-        font-size: 21px;
+    .top{
+        align-items:flex-start;
     }
 
-    .account-summary {
-        gap: 7px;
+    .logo{
+        font-size:18px;
     }
 
-    .summary-card {
-        padding: 12px 8px;
+    .nav button{
+        padding:7px;
+        font-size:10px;
     }
 
-    .summary-card h3 {
-        font-size: 10px;
+    .chart{
+        height:300px;
     }
 
-    .summary-value {
-        font-size: 16px;
+    .digit b{
+        font-size:10px;
     }
 
-    .instrument-grid {
-        grid-template-columns: repeat(2,1fr);
+    .digit span{
+        font-size:6px;
     }
 
-    .quick-actions {
-        grid-template-columns: repeat(2,1fr);
+    .bottom{
+        grid-template-columns:1fr;
     }
 
-    .chart-box {
-        min-height: 280px;
-    }
-
-    #tradingChart {
-        height: 220px;
-    }
-
-    .position-row {
-        grid-template-columns: 1fr .8fr 1fr auto;
-        font-size: 12px;
-    }
-
-    .position-row .entry-price {
-        display: none;
-    }
-
-    .history-row {
-        grid-template-columns: 1fr 1fr;
-    }
 }
 </style>
 </head>
 
 <body>
 
-<header class="header">
+<div class="dashboard">
+
+<!-- TOP -->
+<div class="top">
 
     <div class="logo">
         Apex Markets
     </div>
 
-    <nav class="menu">
-        <a href="dashboard.html">Dashboard</a>
-        <a href="index.html">Home</a>
-        <a href="#" onclick="logout()">Logout</a>
-    </nav>
+    <div class="nav">
 
-</header>
-
-
-<main class="section dashboard">
-
-    <!-- TOP -->
-
-    <div class="dashboard-top">
-
-        <div class="dashboard-title">
-
-            <h1 id="welcome">
-                Welcome to Apex Markets
-            </h1>
-
-            <p id="modeMessage">
-                Demo Mode — simulated trading only.
-            </p>
-
-        </div>
-
-        <a href="profile.html" class="profile-button">
-            👤 Profile
-        </a>
-
-    </div>
-
-
-    <!-- MODE -->
-
-    <div class="mode-bar">
-
-        <strong>Trading:</strong>
-
-        <button
-            id="demoModeBtn"
-            class="mode-btn active"
-            onclick="setTradingMode('demo')">
-
-            🧪 Demo
-
+        <button onclick="selectCategory('volatility')">
+            Volatility
         </button>
 
-        <button
-            id="realModeBtn"
-            class="mode-btn"
-            onclick="setTradingMode('real')">
+        <button onclick="selectCategory('risefall')">
+            Rise/Fall
+        </button>
 
-            💳 Real
+        <button onclick="selectCategory('overunder')">
+            Over/Under
+        </button>
 
+        <button onclick="logout()">
+            Logout
         </button>
 
     </div>
 
+</div>
 
-    <!-- ACCOUNT SUMMARY -->
 
-    <div class="account-summary">
+<!-- ACCOUNT -->
+<div class="account">
 
-        <div class="summary-card">
-            <h3>Balance</h3>
+    <div>
+        <small>ACCOUNT</small>
+        <strong id="welcome">Apex Trader</strong>
+    </div>
 
-            <p class="summary-value" id="balance">
-                $10,000.00
-            </p>
+    <div>
+        <small>BALANCE</small>
+        <strong id="balance">$10,000.00</strong>
+    </div>
+
+    <div>
+        <small>EQUITY</small>
+        <strong id="equity">$10,000.00</strong>
+    </div>
+
+    <div>
+        <small>P/L</small>
+        <strong id="profit">+$0.00</strong>
+    </div>
+
+</div>
+
+
+<!-- TERMINAL -->
+<div class="terminal">
+
+
+<!-- CHART -->
+<div class="panel">
+
+    <div class="chart-head">
+
+        <div>
+            <b id="selectedMarket">
+                Volatility 10
+            </b>
+
+            <br>
+
+            <small id="chartPrice">
+                Demo price: 1000.24
+            </small>
         </div>
 
-        <div class="summary-card">
-            <h3>Equity</h3>
-
-            <p class="summary-value" id="equity">
-                $10,000.00
-            </p>
-        </div>
-
-        <div class="summary-card">
-            <h3>P/L</h3>
-
-            <p class="summary-value positive" id="profit">
-                +$0.00
-            </p>
-        </div>
+        <small>
+            ● DEMO
+        </small>
 
     </div>
 
 
-    <!-- QUICK ACTIONS -->
+    <div class="chart">
 
-    <div class="quick-actions">
+        <canvas id="tradingChart"></canvas>
+
+
+        <!-- DIGITS INSIDE CHART -->
+        <div class="digits">
+
+            <div class="digit active" onclick="selectDigit(0,this)">
+                <b>0</b>
+                <span>12.4%</span>
+            </div>
+
+            <div class="digit" onclick="selectDigit(1,this)">
+                <b>1</b>
+                <span>8.7%</span>
+            </div>
+
+            <div class="digit" onclick="selectDigit(2,this)">
+                <b>2</b>
+                <span>9.6%</span>
+            </div>
+
+            <div class="digit" onclick="selectDigit(3,this)">
+                <b>3</b>
+                <span>11.2%</span>
+            </div>
+
+            <div class="digit" onclick="selectDigit(4,this)">
+                <b>4</b>
+                <span>10.1%</span>
+            </div>
+
+            <div class="digit" onclick="selectDigit(5,this)">
+                <b>5</b>
+                <span>9.4%</span>
+            </div>
+
+            <div class="digit" onclick="selectDigit(6,this)">
+                <b>6</b>
+                <span>7.8%</span>
+            </div>
+
+            <div class="digit" onclick="selectDigit(7,this)">
+                <b>7</b>
+                <span>10.6%</span>
+            </div>
+
+            <div class="digit" onclick="selectDigit(8,this)">
+                <b>8</b>
+                <span>11.8%</span>
+            </div>
+
+            <div class="digit" onclick="selectDigit(9,this)">
+                <b>9</b>
+                <span>8.4%</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- VOLATILITY -->
+<div class="panel">
+
+    <div class="side-title">
+        VOLATILITY
+    </div>
+
+    <div class="volatility">
+
+        <button class="active"
+        onclick="selectVolatility('Volatility 10',1000.24,this)">
+
+            <b>V10 <span>+0.42%</span></b>
+            <small>1000.24</small>
+
+        </button>
+
+
+        <button
+        onclick="selectVolatility('Volatility 25',2540.18,this)">
+
+            <b>V25 <span>+0.87%</span></b>
+            <small>2540.18</small>
+
+        </button>
+
+
+        <button
+        onclick="selectVolatility('Volatility 50',5012.64,this)">
+
+            <b>V50 <span>+1.14%</span></b>
+            <small>5012.64</small>
+
+        </button>
+
+
+        <button
+        onclick="selectVolatility('Volatility 75',7488.31,this)">
+
+            <b>V75 <span>+0.63%</span></b>
+            <small>7488.31</small>
+
+        </button>
+
+
+        <button
+        onclick="selectVolatility('Volatility 100',10024.72,this)">
+
+            <b>V100 <span>+1.42%</span></b>
+            <small>10024.72</small>
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- TRADE -->
+<div class="panel trade">
+
+    <h2>Trade</h2>
+
+    <small id="selectedContract">
+        Volatility 10
+    </small>
+
+
+    <label>
+        Contract
+    </label>
+
+    <select id="tradeType">
+
+        <option>Rise / Fall</option>
+        <option>Digits</option>
+        <option>Over / Under</option>
+        <option>Even / Odd</option>
+
+    </select>
+
+
+    <label>
+        Stake
+    </label>
+
+    <input
+        id="tradeAmount"
+        type="number"
+        min="1"
+        placeholder="Enter amount">
+
+
+    <div class="payout">
+
+        <span>
+            Potential payout
+        </span>
+
+        <b id="potentialPayout">
+            $0.00
+        </b>
+
+    </div>
+
+
+    <div class="orders">
+
+        <button
+            class="rise"
+            onclick="placeOrder('BUY')">
+
+            RISE
+
+        </button>
+
+        <button
+            class="fall"
+            onclick="placeOrder('SELL')">
+
+            FALL
+
+        </button>
+
+    </div>
+
+
+    <div class="actions">
 
         <button onclick="showRealFeature('deposit')">
             Deposit
@@ -691,403 +612,48 @@ body {
             Withdraw
         </button>
 
-        <a href="#tradeHistory">
-            History
-        </a>
-
-        <a href="profile.html">
-            Profile
-        </a>
-
     </div>
 
+</div>
 
-    <!-- REAL ACCOUNT -->
+</div>
 
-    <div id="realModeNotice" class="real-account">
 
-        <span class="real-badge">
-            REAL ACCOUNT
-        </span>
+<!-- BOTTOM -->
+<div class="bottom">
 
-        <h2>Real Account Center</h2>
+    <div class="panel">
 
-        <p>
-            Real-money functionality is currently unavailable.
-        </p>
-
-        <div class="real-actions">
-
-            <button
-                class="btn primary-btn"
-                onclick="showRealFeature('deposit')">
-
-                Deposit
-
-            </button>
-
-            <button
-                class="btn secondary-btn"
-                onclick="showRealFeature('withdraw')">
-
-                Withdraw
-
-            </button>
-
-        </div>
-
-        <div class="security-box">
-
-            <h3>Account Verification</h3>
-
-            <p>✓ Email account created</p>
-
-            <p>○ Identity verification: Pending</p>
-
-            <p>○ Account approval: Pending</p>
-
-        </div>
-
-        <div class="transaction-box">
-
-            <h3>Transaction History</h3>
-
-            <p>No real transactions yet.</p>
-
-        </div>
-
-    </div>
-
-
-    <!-- MARKET TERMINAL -->
-
-    <section class="market-terminal">
-
-        <div class="market-heading">
-
-            <h2>Markets</h2>
-
-            <p>
-                Select a market category and instrument to begin demo trading.
-            </p>
-
-        </div>
-
-
-        <!-- CATEGORIES -->
-
-        <div class="market-categories">
-
-            <button
-                class="market-category active"
-                onclick="showCategory('volatility', this)">
-
-                Volatility
-
-            </button>
-
-            <button
-                class="market-category"
-                onclick="showCategory('digits', this)">
-
-                Digits
-
-            </button>
-
-            <button
-                class="market-category"
-                onclick="showCategory('risefall', this)">
-
-                Rise / Fall
-
-            </button>
-
-            <button
-                class="market-category"
-                onclick="showCategory('overunder', this)">
-
-                Over / Under
-
-            </button>
-
-            <button
-                class="market-category"
-                onclick="showCategory('evenodd', this)">
-
-                Even / Odd
-
-            </button>
-
-        </div>
-
-
-        <!-- INSTRUMENTS -->
-
-        <div class="instrument-grid" id="instrumentGrid">
-
-        </div>
-
-
-        <!-- DIGITS -->
-
-        <div class="digits-section" id="digitsSection">
-
-            <div class="digits-title">
-
-                <h3>Digits 0–9</h3>
-
-                <p>
-                    Select a digit to use it in the demo trade.
-                </p>
-
-            </div>
-
-            <div class="digits-grid">
-
-                <div class="digit-card" onclick="selectDigit(0)">
-                    <strong>0</strong>
-                    <span>12.4%</span>
-                </div>
-
-                <div class="digit-card" onclick="selectDigit(1)">
-                    <strong>1</strong>
-                    <span>8.7%</span>
-                </div>
-
-                <div class="digit-card" onclick="selectDigit(2)">
-                    <strong>2</strong>
-                    <span>9.6%</span>
-                </div>
-
-                <div class="digit-card" onclick="selectDigit(3)">
-                    <strong>3</strong>
-                    <span>11.2%</span>
-                </div>
-
-                <div class="digit-card" onclick="selectDigit(4)">
-                    <strong>4</strong>
-                    <span>10.1%</span>
-                </div>
-
-                <div class="digit-card" onclick="selectDigit(5)">
-                    <strong>5</strong>
-                    <span>9.4%</span>
-                </div>
-
-                <div class="digit-card" onclick="selectDigit(6)">
-                    <strong>6</strong>
-                    <span>7.8%</span>
-                </div>
-
-                <div class="digit-card" onclick="selectDigit(7)">
-                    <strong>7</strong>
-                    <span>10.6%</span>
-                </div>
-
-                <div class="digit-card" onclick="selectDigit(8)">
-                    <strong>8</strong>
-                    <span>11.8%</span>
-                </div>
-
-                <div class="digit-card" onclick="selectDigit(9)">
-                    <strong>9</strong>
-                    <span>8.4%</span>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- CHART + TRADE -->
-
-    <div class="terminal-grid">
-
-
-        <!-- CHART -->
-
-        <div class="panel chart-box">
-
-            <div class="chart-header">
-
-                <div>
-
-                    <div
-                        class="chart-market"
-                        id="selectedMarket">
-
-                        Volatility 10
-
-                    </div>
-
-                    <div class="chart-price" id="chartPrice">
-                        Demo market
-                    </div>
-
-                </div>
-
-                <span class="positive">
-                    ● LIVE DEMO
-                </span>
-
-            </div>
-
-            <canvas id="tradingChart"></canvas>
-
-        </div>
-
-
-        <!-- TRADE PANEL -->
-
-        <div class="panel trade-panel">
-
-            <h2>Trade</h2>
-
-            <div class="selected-contract">
-
-                <small>Selected Market</small>
-
-                <strong id="selectedContract">
-                    Volatility 10
-                </strong>
-
-            </div>
-
-
-            <form
-                class="trade-form"
-                onsubmit="return false;">
-
-                <label for="market">
-                    Market
-                </label>
-
-                <select id="market">
-
-                    <option>Volatility 10</option>
-                    <option>Volatility 25</option>
-                    <option>Volatility 50</option>
-                    <option>Volatility 75</option>
-                    <option>Volatility 100</option>
-
-                </select>
-
-
-                <label for="tradeType">
-                    Contract
-                </label>
-
-                <select id="tradeType">
-
-                    <option>Rise / Fall</option>
-                    <option>Digits</option>
-                    <option>Over / Under</option>
-                    <option>Even / Odd</option>
-
-                </select>
-
-
-                <label for="tradeAmount">
-                    Stake Amount
-                </label>
-
-                <input
-                    type="number"
-                    id="tradeAmount"
-                    placeholder="Enter amount"
-                    min="1"
-                    step="0.01">
-
-
-                <div class="payout-box">
-
-                    <span>Potential payout</span>
-
-                    <strong id="potentialPayout">
-                        $0.00
-                    </strong>
-
-                </div>
-
-
-                <div class="order-buttons">
-
-                    <button
-                        type="button"
-                        class="trade-button buy-button"
-                        onclick="placeOrder('BUY')">
-
-                        BUY / RISE
-
-                    </button>
-
-                    <button
-                        type="button"
-                        class="trade-button sell-button"
-                        onclick="placeOrder('SELL')">
-
-                        SELL / FALL
-
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
-
-    <!-- OPEN POSITIONS -->
-
-    <div class="panel positions-panel">
-
-        <h2>Open Positions</h2>
+        <b>Open Positions</b>
 
         <div id="openPositions">
-
             <p>No open positions.</p>
-
         </div>
 
     </div>
 
 
-    <!-- TRADE HISTORY -->
+    <div class="panel">
 
-    <div
-        class="panel"
-        id="recentTrades">
+        <b>Recent Trades</b>
 
-        <h2>Recent Trades</h2>
-
-        <div id="tradeHistory">
-
+        <div id="recentTrades">
             <p>No trades yet.</p>
-
         </div>
 
     </div>
 
-</main>
+</div>
 
 
-<footer>
+<p style="text-align:center;font-size:10px;opacity:.6">
+    Apex Markets Demo Platform — Simulated trading only.
+</p>
 
-    <p>Apex Markets Demo Platform</p>
-
-    <p>
-        Simulated trading only — no real money.
-    </p>
-
-</footer>
+</div>
 
 
-<!-- EXISTING CONNECTIONS -->
-
+<!-- EXISTING SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script src="script.js"></script>
@@ -1095,273 +661,107 @@ body {
 
 <script>
 
-/* =====================================================
-   LOGIN CHECK
-===================================================== */
+/* LOGIN */
 
-const loggedIn =
-    localStorage.getItem("apexLoggedIn");
-
-if (loggedIn !== "true") {
-
-    window.location.href = "login.html";
-
+if(localStorage.getItem("apexLoggedIn") !== "true"){
+    window.location.href="login.html";
 }
 
 
-/* =====================================================
-   USER NAME
-===================================================== */
+/* NAME */
 
-const name =
-    localStorage.getItem("apexName");
+const name = localStorage.getItem("apexName");
 
-if (name) {
-
+if(name){
     document.getElementById("welcome").textContent =
-        "Welcome, " + name + "!";
-
+        name;
 }
 
 
-/* =====================================================
-   MARKET DATA
-===================================================== */
+/* VOLATILITY */
 
-const marketData = {
-
-    volatility: [
-        ["Volatility 10","1000.24","+0.42%"],
-        ["Volatility 25","2540.18","+0.87%"],
-        ["Volatility 50","5012.64","+1.14%"],
-        ["Volatility 75","7488.31","+0.63%"],
-        ["Volatility 100","10024.72","+1.42%"]
-    ],
-
-    risefall: [
-        ["BTC/USD","118500","+2.45%"],
-        ["EUR/USD","1.1725","+0.38%"],
-        ["GOLD","3450","+1.12%"],
-        ["ETH/USD","4310","+1.76%"]
-    ],
-
-    overunder: [
-        ["Over / Under 0","Demo","10.2%"],
-        ["Over / Under 1","Demo","9.8%"],
-        ["Over / Under 2","Demo","11.4%"],
-        ["Over / Under 3","Demo","8.9%"]
-    ],
-
-    evenodd: [
-        ["Even","Demo","50.1%"],
-        ["Odd","Demo","49.9%"]
-    ]
-
-};
-
-
-/* =====================================================
-   CATEGORY DISPLAY
-===================================================== */
-
-function showCategory(category, button) {
+function selectVolatility(name,price,button){
 
     document
-        .querySelectorAll(".market-category")
-        .forEach(btn => btn.classList.remove("active"));
+    .querySelectorAll(".volatility button")
+    .forEach(b => b.classList.remove("active"));
 
     button.classList.add("active");
 
-    const grid =
-        document.getElementById("instrumentGrid");
+    document.getElementById("selectedMarket")
+        .textContent=name;
 
-    const digits =
-        document.getElementById("digitsSection");
+    document.getElementById("selectedContract")
+        .textContent=name;
 
-    if (category === "digits") {
-
-        grid.innerHTML = "";
-
-        digits.classList.add("show");
-
-        document.getElementById("selectedMarket").textContent =
-            "Digits";
-
-        document.getElementById("selectedContract").textContent =
-            "Digits";
-
-        return;
-
-    }
-
-    digits.classList.remove("show");
-
-    grid.innerHTML = "";
-
-    const data =
-        marketData[category] || marketData.volatility;
-
-    data.forEach((item,index) => {
-
-        const card =
-            document.createElement("div");
-
-        card.className =
-            "instrument-card" +
-            (index === 0 ? " active" : "");
-
-        card.innerHTML = `
-
-            <div class="instrument-name">
-                ${item[0]}
-            </div>
-
-            <div class="instrument-price">
-                ${item[1]}
-            </div>
-
-            <div class="instrument-change positive">
-                ${item[2]}
-            </div>
-
-        `;
-
-        card.onclick = function () {
-
-            document
-                .querySelectorAll(".instrument-card")
-                .forEach(c =>
-                    c.classList.remove("active")
-                );
-
-            card.classList.add("active");
-
-            selectMarket(item[0], item[1]);
-
-        };
-
-        grid.appendChild(card);
-
-    });
-
-    if (data.length > 0) {
-
-        selectMarket(data[0][0], data[0][1]);
-
-    }
-
+    document.getElementById("chartPrice")
+        .textContent="Demo price: "+price;
 }
 
 
-/* =====================================================
-   SELECT MARKET
-===================================================== */
+/* DIGIT */
 
-function selectMarket(name, price) {
-
-    document.getElementById(
-        "selectedMarket"
-    ).textContent = name;
-
-    document.getElementById(
-        "selectedContract"
-    ).textContent = name;
-
-    document.getElementById(
-        "chartPrice"
-    ).textContent =
-        "Demo price: " + price;
-
-}
-
-
-/* =====================================================
-   DIGIT SELECTION
-===================================================== */
-
-function selectDigit(digit) {
+function selectDigit(digit,element){
 
     document
-        .querySelectorAll(".digit-card")
-        .forEach(card =>
-            card.classList.remove("selected")
-        );
+    .querySelectorAll(".digit")
+    .forEach(d => d.classList.remove("active"));
 
-    event.currentTarget.classList.add("selected");
+    element.classList.add("active");
 
-    document.getElementById(
-        "selectedMarket"
-    ).textContent =
-        "Digit " + digit;
+    document.getElementById("tradeType")
+        .value="Digits";
 
-    document.getElementById(
-        "selectedContract"
-    ).textContent =
-        "Digit " + digit;
+    document.getElementById("selectedContract")
+        .textContent="Digit "+digit;
+}
 
-    document.getElementById(
-        "tradeType"
-    ).value =
-        "Digits";
+
+/* CATEGORY */
+
+function selectCategory(category){
+
+    if(category === "volatility"){
+        document.getElementById("selectedMarket")
+            .textContent="Volatility 10";
+    }
 
 }
 
 
-/* =====================================================
-   PAYOUT PREVIEW
-===================================================== */
+/* PAYOUT */
 
-const amountInput =
-    document.getElementById("tradeAmount");
+document.getElementById("tradeAmount")
+.addEventListener("input",function(){
 
-if (amountInput) {
+    const amount =
+        Number(this.value) || 0;
 
-    amountInput.addEventListener(
-        "input",
-        function () {
+    document.getElementById("potentialPayout")
+        .textContent =
+        "$"+(amount*1.80).toFixed(2);
 
-            const amount =
-                Number(this.value) || 0;
-
-            const payout =
-                amount * 1.80;
-
-            document.getElementById(
-                "potentialPayout"
-            ).textContent =
-                "$" + payout.toFixed(2);
-
-        }
-    );
-
-}
+});
 
 
-/* =====================================================
-   START DASHBOARD
-===================================================== */
+/* START EXISTING SYSTEM */
 
-updateAccountDisplay();
+if(typeof updateAccountDisplay === "function")
+    updateAccountDisplay();
 
-createTradingChart();
+if(typeof createTradingChart === "function")
+    createTradingChart();
 
-loadTradeHistory();
+if(typeof loadTradeHistory === "function")
+    loadTradeHistory();
 
-loadOpenPositions();
+if(typeof loadOpenPositions === "function")
+    loadOpenPositions();
 
-loadTradingMode();
-
-
-/* =====================================================
-   LOAD DEFAULT MARKET
-===================================================== */
-
-showCategory(
-    "volatility",
-    document.querySelector(".market-category")
-);
+if(typeof loadTradingMode === "function")
+    loadTradingMode();
 
 </script>
 
 </body>
-</html>
+           </html>
