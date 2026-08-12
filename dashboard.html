@@ -1,15 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
 <title>Apex Markets Dashboard</title>
+
 <link rel="stylesheet" href="style.css">
 
-<style>
-*{box-sizing:border-box}
 
-body{margin:0}
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+}
 
 .dashboard{
     max-width:1400px;
@@ -17,10 +30,16 @@ body{margin:0}
     padding:12px;
 }
 
+
+/* =========================
+   TOP
+========================= */
+
 .top{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    gap:10px;
     margin-bottom:10px;
 }
 
@@ -42,14 +61,19 @@ body{margin:0}
     font-weight:bold;
 }
 
+
+/* =========================
+   ACCOUNT
+========================= */
+
 .account{
-    display:flex;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
     gap:8px;
     margin-bottom:10px;
 }
 
 .account div{
-    flex:1;
     padding:10px;
     border:1px solid #ccc;
     border-radius:9px;
@@ -65,22 +89,34 @@ body{margin:0}
     font-size:15px;
 }
 
+
+/* =========================
+   MAIN TERMINAL
+========================= */
+
 .terminal{
     display:grid;
-    grid-template-columns:1fr 170px 250px;
+    grid-template-columns:minmax(0,1fr) 250px;
     gap:8px;
 }
 
-.panel{
+
+/* =========================
+   CHART
+========================= */
+
+.chart-panel{
+    position:relative;
     border:1px solid #ccc;
     border-radius:10px;
-    overflow:hidden;
+    overflow:visible;
 }
 
 .chart-head{
     padding:10px;
     display:flex;
     justify-content:space-between;
+    align-items:center;
 }
 
 .chart-head small{
@@ -89,7 +125,7 @@ body{margin:0}
 
 .chart{
     position:relative;
-    height:420px;
+    height:430px;
     padding:5px;
 }
 
@@ -98,23 +134,35 @@ body{margin:0}
     height:100%;
 }
 
+
+/* =========================
+   DIGITS INSIDE CHART
+========================= */
+
 .digits{
     position:absolute;
     left:5px;
     right:5px;
     bottom:5px;
+
     display:grid;
-    grid-template-columns:repeat(10,1fr);
+    grid-template-columns:
+        repeat(10,minmax(0,1fr));
+
     gap:2px;
-    background:rgba(0,0,0,.65);
+
+    background:rgba(0,0,0,.72);
+
     padding:5px;
+
     border-radius:7px;
 }
 
 .digit{
+    min-width:0;
     text-align:center;
     color:white;
-    padding:3px 0;
+    padding:4px 1px;
     border-radius:5px;
     cursor:pointer;
 }
@@ -125,6 +173,7 @@ body{margin:0}
 }
 
 .digit span{
+    display:block;
     font-size:7px;
     opacity:.8;
 }
@@ -133,52 +182,125 @@ body{margin:0}
     background:#3861fb;
 }
 
-.side-title{
-    padding:12px;
-    font-weight:bold;
-    border-bottom:1px solid #ccc;
+
+/* =========================
+   VOLATILITY BUTTON
+========================= */
+
+.volatility-menu{
+    position:absolute;
+
+    top:8px;
+    right:8px;
+
+    z-index:50;
 }
 
-.volatility{
-    padding:5px;
-}
+.volatility-toggle{
+    border:1px solid #ccc;
 
-.volatility button{
-    width:100%;
-    text-align:left;
-    border:1px solid transparent;
-    background:transparent;
-    padding:12px 9px;
-    margin-bottom:3px;
+    background:#111;
+    color:white;
+
+    padding:8px 11px;
+
     border-radius:7px;
+
+    font-size:11px;
+    font-weight:bold;
+
     cursor:pointer;
 }
 
-.volatility button.active{
-    border-color:#3861fb;
-    background:rgba(56,97,251,.1);
+
+/* =========================
+   VOLATILITY DROPDOWN
+========================= */
+
+.volatility-list{
+    display:none;
+
+    width:145px;
+
+    margin-top:5px;
+
+    padding:5px;
+
+    border-radius:8px;
+
+    background:#111;
+
+    border:1px solid #444;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0,0,0,.3);
 }
 
-.volatility b{
+.volatility-list.open{
+    display:block;
+}
+
+.volatility-list button{
+    width:100%;
+
     display:flex;
+
     justify-content:space-between;
+    align-items:center;
+
+    border:0;
+
+    background:transparent;
+
+    color:white;
+
+    padding:9px 7px;
+
+    cursor:pointer;
+
+    border-radius:5px;
+
+    margin:1px 0;
 }
 
-.volatility small{
-    opacity:.6;
+.volatility-list button:hover,
+.volatility-list button.active{
+    background:#3861fb;
 }
+
+.volatility-list b{
+    font-size:11px;
+}
+
+.volatility-list small{
+    font-size:9px;
+    opacity:.7;
+}
+
+
+/* =========================
+   TRADE PANEL
+========================= */
 
 .trade{
     padding:12px;
+
+    border:1px solid #ccc;
+
+    border-radius:10px;
 }
 
 .trade h2{
     margin-top:0;
+    margin-bottom:4px;
 }
 
 .trade label{
     display:block;
+
     margin-top:10px;
+
     font-size:11px;
     font-weight:bold;
 }
@@ -186,124 +308,140 @@ body{margin:0}
 .trade input,
 .trade select{
     width:100%;
+
     padding:10px;
+
     margin-top:4px;
+
     border-radius:7px;
+
     border:1px solid #aaa;
+
     background:transparent;
 }
 
 .payout{
     margin-top:10px;
+
     padding:10px;
+
     border-radius:7px;
-    background:rgba(22,163,74,.1);
+
+    background:
+        rgba(22,163,74,.1);
+
     display:flex;
+
     justify-content:space-between;
 }
 
 .orders{
     display:grid;
+
     grid-template-columns:1fr 1fr;
+
     gap:6px;
+
     margin-top:10px;
 }
 
 .orders button{
     border:0;
+
     padding:12px;
+
     border-radius:7px;
+
     color:white;
+
     font-weight:bold;
+
     cursor:pointer;
 }
 
-.rise{background:#16a34a}
-.fall{background:#dc2626}
-
-.bottom{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-top:8px;
+.rise{
+    background:#16a34a;
 }
 
-.bottom .panel{
-    padding:12px;
+.fall{
+    background:#dc2626;
 }
 
 .actions{
     display:flex;
+
     gap:6px;
+
     margin-top:10px;
 }
 
 .actions button{
     flex:1;
+
     padding:9px;
+
     border:1px solid #ccc;
+
     border-radius:7px;
+
     background:transparent;
+
+    cursor:pointer;
 }
+
+
+/* =========================
+   BOTTOM
+========================= */
+
+.bottom{
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:8px;
+
+    margin-top:8px;
+}
+
+.bottom .panel{
+    padding:12px;
+
+    border:1px solid #ccc;
+
+    border-radius:10px;
+}
+
+
+/* =========================
+   TABLET / PHONE
+========================= */
 
 @media(max-width:800px){
 
     .terminal{
-        grid-template-columns:minmax(0,1fr) 125px;
-        gap:6px;
-    }
-
-    .terminal > .panel:first-child{
-        grid-column:1;
-        grid-row:1;
-    }
-
-    .terminal > .panel:nth-child(2){
-        grid-column:2;
-        grid-row:1;
-    }
-
-    .terminal > .panel:nth-child(3){
-        grid-column:1 / -1;
-        grid-row:2;
+        grid-template-columns:1fr;
     }
 
     .chart{
-        height:330px;
+        height:360px;
     }
 
-    .volatility{
-        display:block;
-        padding:4px;
-    }
-
-    .volatility button{
+    .trade{
         width:100%;
-        text-align:left;
-        padding:10px 6px;
-    }
-
-    .volatility b{
-        display:flex;
-        justify-content:space-between;
-        font-size:10px;
-    }
-
-    .volatility small{
-        font-size:8px;
     }
 
 }
 
+
+/* =========================
+   SMALL PHONE
+========================= */
+
 @media(max-width:500px){
 
-    .account{
-        display:grid;
-        grid-template-columns:repeat(3,1fr);
-    }
-
-    .account div:first-child{
-        grid-column:span 3;
+    .dashboard{
+        padding:7px;
     }
 
     .top{
@@ -316,11 +454,44 @@ body{margin:0}
 
     .nav button{
         padding:7px;
-        font-size:10px;
+
+        font-size:9px;
+    }
+
+    .account{
+        grid-template-columns:
+            repeat(3,1fr);
+    }
+
+    .account div:first-child{
+        grid-column:
+            span 3;
+    }
+
+    .account strong{
+        font-size:13px;
     }
 
     .chart{
-        height:300px;
+        height:310px;
+    }
+
+    .volatility-menu{
+        top:6px;
+        right:6px;
+    }
+
+    .volatility-toggle{
+        padding:7px 9px;
+        font-size:10px;
+    }
+
+    .volatility-list{
+        width:130px;
+    }
+
+    .volatility-list button{
+        padding:8px 6px;
     }
 
     .digit b{
@@ -336,36 +507,60 @@ body{margin:0}
     }
 
 }
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <div class="dashboard">
 
-<!-- TOP -->
+
+<!-- =========================
+     TOP
+========================= -->
+
 <div class="top">
 
     <div class="logo">
         Apex Markets
     </div>
 
+
     <div class="nav">
 
-        <button onclick="selectCategory('volatility')">
-            Volatility
+        <button
+            onclick="toggleVolatility()">
+
+            Volatility ▾
+
         </button>
 
-        <button onclick="selectCategory('risefall')">
+
+        <button
+            onclick="selectCategory('risefall')">
+
             Rise/Fall
+
         </button>
 
-        <button onclick="selectCategory('overunder')">
+
+        <button
+            onclick="selectCategory('overunder')">
+
             Over/Under
+
         </button>
 
-        <button onclick="logout()">
+
+        <button
+            onclick="logout()">
+
             Logout
+
         </button>
 
     </div>
@@ -373,42 +568,87 @@ body{margin:0}
 </div>
 
 
-<!-- ACCOUNT -->
+<!-- =========================
+     ACCOUNT
+========================= -->
+
 <div class="account">
 
-    <div>
-        <small>ACCOUNT</small>
-        <strong id="welcome">Apex Trader</strong>
-    </div>
 
     <div>
-        <small>BALANCE</small>
-        <strong id="balance">$10,000.00</strong>
+
+        <small>
+            ACCOUNT
+        </small>
+
+        <strong id="welcome">
+            Apex Trader
+        </strong>
+
     </div>
 
-    <div>
-        <small>EQUITY</small>
-        <strong id="equity">$10,000.00</strong>
-    </div>
 
     <div>
-        <small>P/L</small>
-        <strong id="profit">+$0.00</strong>
+
+        <small>
+            BALANCE
+        </small>
+
+        <strong id="balance">
+            $10,000.00
+        </strong>
+
     </div>
+
+
+    <div>
+
+        <small>
+            EQUITY
+        </small>
+
+        <strong id="equity">
+            $10,000.00
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <small>
+            P/L
+        </small>
+
+        <strong id="profit">
+            +$0.00
+        </strong>
+
+    </div>
+
 
 </div>
 
 
-<!-- TERMINAL -->
+<!-- =========================
+     TERMINAL
+========================= -->
+
 <div class="terminal">
 
 
-<!-- CHART -->
-<div class="panel">
+<!-- =========================
+     CHART
+========================= -->
+
+<div class="chart-panel">
+
 
     <div class="chart-head">
 
+
         <div>
+
             <b id="selectedMarket">
                 Volatility 10
             </b>
@@ -418,72 +658,246 @@ body{margin:0}
             <small id="chartPrice">
                 Demo price: 1000.24
             </small>
+
         </div>
+
 
         <small>
             ● DEMO
         </small>
+
+
+    </div>
+
+
+    <!-- VOLATILITY MENU -->
+
+    <div class="volatility-menu">
+
+
+        <button
+            class="volatility-toggle"
+            onclick="toggleVolatility()">
+
+            Volatility ▾
+
+        </button>
+
+
+        <div
+            id="volatilityList"
+            class="volatility-list">
+
+
+            <button
+                onclick="selectVolatility(
+                    'Volatility 10',
+                    1000.24,
+                    this
+                )">
+
+                <b>
+                    V10
+                </b>
+
+                <small>
+                    1000.24
+                </small>
+
+            </button>
+
+
+            <button
+                onclick="selectVolatility(
+                    'Volatility 25',
+                    2540.18,
+                    this
+                )">
+
+                <b>
+                    V25
+                </b>
+
+                <small>
+                    2540.18
+                </small>
+
+            </button>
+
+
+            <button
+                onclick="selectVolatility(
+                    'Volatility 50',
+                    5012.64,
+                    this
+                )">
+
+                <b>
+                    V50
+                </b>
+
+                <small>
+                    5012.64
+                </small>
+
+            </button>
+
+
+            <button
+                onclick="selectVolatility(
+                    'Volatility 75',
+                    7488.31,
+                    this
+                )">
+
+                <b>
+                    V75
+                </b>
+
+                <small>
+                    7488.31
+                </small>
+
+            </button>
+
+
+            <button
+                onclick="selectVolatility(
+                    'Volatility 100',
+                    10024.72,
+                    this
+                )">
+
+                <b>
+                    V100
+                </b>
+
+                <small>
+                    10024.72
+                </small>
+
+            </button>
+
+
+        </div>
 
     </div>
 
 
     <div class="chart">
 
-        <canvas id="tradingChart"></canvas>
+
+        <canvas
+            id="tradingChart">
+        </canvas>
 
 
-        <!-- DIGITS INSIDE CHART -->
+        <!-- =====================
+             DIGITS
+        ====================== -->
+
         <div class="digits">
 
-            <div class="digit active" onclick="selectDigit(0,this)">
+
+            <div
+                class="digit active"
+                onclick="selectDigit(0,this)">
+
                 <b>0</b>
                 <span>12.4%</span>
+
             </div>
 
-            <div class="digit" onclick="selectDigit(1,this)">
+
+            <div
+                class="digit"
+                onclick="selectDigit(1,this)">
+
                 <b>1</b>
                 <span>8.7%</span>
+
             </div>
 
-            <div class="digit" onclick="selectDigit(2,this)">
+
+            <div
+                class="digit"
+                onclick="selectDigit(2,this)">
+
                 <b>2</b>
                 <span>9.6%</span>
+
             </div>
 
-            <div class="digit" onclick="selectDigit(3,this)">
+
+            <div
+                class="digit"
+                onclick="selectDigit(3,this)">
+
                 <b>3</b>
                 <span>11.2%</span>
+
             </div>
 
-            <div class="digit" onclick="selectDigit(4,this)">
+
+            <div
+                class="digit"
+                onclick="selectDigit(4,this)">
+
                 <b>4</b>
                 <span>10.1%</span>
+
             </div>
 
-            <div class="digit" onclick="selectDigit(5,this)">
+
+            <div
+                class="digit"
+                onclick="selectDigit(5,this)">
+
                 <b>5</b>
                 <span>9.4%</span>
+
             </div>
 
-            <div class="digit" onclick="selectDigit(6,this)">
+
+            <div
+                class="digit"
+                onclick="selectDigit(6,this)">
+
                 <b>6</b>
                 <span>7.8%</span>
+
             </div>
 
-            <div class="digit" onclick="selectDigit(7,this)">
+
+            <div
+                class="digit"
+                onclick="selectDigit(7,this)">
+
                 <b>7</b>
                 <span>10.6%</span>
+
             </div>
 
-            <div class="digit" onclick="selectDigit(8,this)">
+
+            <div
+                class="digit"
+                onclick="selectDigit(8,this)">
+
                 <b>8</b>
                 <span>11.8%</span>
+
             </div>
 
-            <div class="digit" onclick="selectDigit(9,this)">
+
+            <div
+                class="digit"
+                onclick="selectDigit(9,this)">
+
                 <b>9</b>
                 <span>8.4%</span>
+
             </div>
+
 
         </div>
 
@@ -492,68 +906,17 @@ body{margin:0}
 </div>
 
 
-<!-- VOLATILITY -->
-<div class="panel">
+<!-- =========================
+     TRADE
+========================= -->
 
-    <div class="side-title">
-        VOLATILITY
-    </div>
-
-    <div class="volatility">
-
-        <button class="active"
-        onclick="selectVolatility('Volatility 10',1000.24,this)">
-
-            <b>V10 <span>+0.42%</span></b>
-            <small>1000.24</small>
-
-        </button>
+<div class="trade">
 
 
-        <button
-        onclick="selectVolatility('Volatility 25',2540.18,this)">
+    <h2>
+        Trade
+    </h2>
 
-            <b>V25 <span>+0.87%</span></b>
-            <small>2540.18</small>
-
-        </button>
-
-
-        <button
-        onclick="selectVolatility('Volatility 50',5012.64,this)">
-
-            <b>V50 <span>+1.14%</span></b>
-            <small>5012.64</small>
-
-        </button>
-
-
-        <button
-        onclick="selectVolatility('Volatility 75',7488.31,this)">
-
-            <b>V75 <span>+0.63%</span></b>
-            <small>7488.31</small>
-
-        </button>
-
-
-        <button
-        onclick="selectVolatility('Volatility 100',10024.72,this)">
-
-            <b>V100 <span>+1.42%</span></b>
-            <small>10024.72</small>
-
-        </button>
-
-    </div>
-
-</div>
-
-
-<!-- TRADE -->
-<div class="panel trade">
-
-    <h2>Trade</h2>
 
     <small id="selectedContract">
         Volatility 10
@@ -564,12 +927,24 @@ body{margin:0}
         Contract
     </label>
 
+
     <select id="tradeType">
 
-        <option>Rise / Fall</option>
-        <option>Digits</option>
-        <option>Over / Under</option>
-        <option>Even / Odd</option>
+        <option>
+            Rise / Fall
+        </option>
+
+        <option>
+            Digits
+        </option>
+
+        <option>
+            Over / Under
+        </option>
+
+        <option>
+            Even / Odd
+        </option>
 
     </select>
 
@@ -577,6 +952,7 @@ body{margin:0}
     <label>
         Stake
     </label>
+
 
     <input
         id="tradeAmount"
@@ -591,6 +967,7 @@ body{margin:0}
             Potential payout
         </span>
 
+
         <b id="potentialPayout">
             $0.00
         </b>
@@ -600,6 +977,7 @@ body{margin:0}
 
     <div class="orders">
 
+
         <button
             class="rise"
             onclick="placeOrder('BUY')">
@@ -607,6 +985,7 @@ body{margin:0}
             RISE
 
         </button>
+
 
         <button
             class="fall"
@@ -616,35 +995,58 @@ body{margin:0}
 
         </button>
 
+
     </div>
 
 
     <div class="actions">
 
-        <button onclick="showRealFeature('deposit')">
+
+        <button
+            onclick="showRealFeature('deposit')">
+
             Deposit
+
         </button>
 
-        <button onclick="showRealFeature('withdraw')">
+
+        <button
+            onclick="showRealFeature('withdraw')">
+
             Withdraw
+
         </button>
+
 
     </div>
 
-</div>
 
 </div>
 
 
-<!-- BOTTOM -->
+</div>
+
+
+<!-- =========================
+     BOTTOM
+========================= -->
+
 <div class="bottom">
 
+
     <div class="panel">
 
-        <b>Open Positions</b>
+        <b>
+            Open Positions
+        </b>
+
 
         <div id="openPositions">
-            <p>No open positions.</p>
+
+            <p>
+                No open positions.
+            </p>
+
         </div>
 
     </div>
@@ -652,133 +1054,327 @@ body{margin:0}
 
     <div class="panel">
 
-        <b>Recent Trades</b>
+        <b>
+            Recent Trades
+        </b>
+
 
         <div id="recentTrades">
-            <p>No trades yet.</p>
+
+            <p>
+                No trades yet.
+            </p>
+
         </div>
 
     </div>
 
+
 </div>
 
 
-<p style="text-align:center;font-size:10px;opacity:.6">
-    Apex Markets Demo Platform — Simulated trading only.
+<p
+    style="
+        text-align:center;
+        font-size:10px;
+        opacity:.6;
+    ">
+
+    Apex Markets Demo Platform —
+    Simulated trading only.
+
 </p>
 
+
 </div>
 
 
-<!-- EXISTING SCRIPTS -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- =========================
+     EXISTING SCRIPTS
+========================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+</script>
+
 <script src="supabase.js"></script>
+
 <script src="script.js"></script>
 
 
 <script>
 
-/* LOGIN */
+/* =========================
+   LOGIN
+========================= */
 
-if(localStorage.getItem("apexLoggedIn") !== "true"){
-    window.location.href="login.html";
+if(
+    localStorage.getItem(
+        "apexLoggedIn"
+    ) !== "true"
+){
+
+    window.location.href =
+        "login.html";
+
 }
 
 
-/* NAME */
+/* =========================
+   USER NAME
+========================= */
 
-const name = localStorage.getItem("apexName");
+const name =
+    localStorage.getItem(
+        "apexName"
+    );
+
 
 if(name){
-    document.getElementById("welcome").textContent =
-        name;
+
+    document.getElementById(
+        "welcome"
+    ).textContent = name;
+
 }
 
 
-/* VOLATILITY */
+/* =========================
+   VOLATILITY MENU
+========================= */
 
-function selectVolatility(name,price,button){
+function toggleVolatility(){
+
+    const menu =
+        document.getElementById(
+            "volatilityList"
+        );
+
+    menu.classList.toggle(
+        "open"
+    );
+
+}
+
+
+/* =========================
+   SELECT VOLATILITY
+========================= */
+
+function selectVolatility(
+    name,
+    price,
+    button
+){
 
     document
-    .querySelectorAll(".volatility button")
-    .forEach(b => b.classList.remove("active"));
+        .querySelectorAll(
+            ".volatility-list button"
+        )
+        .forEach(function(item){
 
-    button.classList.add("active");
+            item.classList.remove(
+                "active"
+            );
 
-    document.getElementById("selectedMarket")
-        .textContent=name;
-
-    document.getElementById("selectedContract")
-        .textContent=name;
-
-    document.getElementById("chartPrice")
-        .textContent="Demo price: "+price;
-}
+        });
 
 
-/* DIGIT */
+    button.classList.add(
+        "active"
+    );
 
-function selectDigit(digit,element){
+
+    document.getElementById(
+        "selectedMarket"
+    ).textContent = name;
+
+
+    document.getElementById(
+        "selectedContract"
+    ).textContent = name;
+
+
+    document.getElementById(
+        "chartPrice"
+    ).textContent =
+        "Demo price: " +
+        price;
+
 
     document
-    .querySelectorAll(".digit")
-    .forEach(d => d.classList.remove("active"));
+        .getElementById(
+            "volatilityList"
+        )
+        .classList.remove(
+            "open"
+        );
 
-    element.classList.add("active");
-
-    document.getElementById("tradeType")
-        .value="Digits";
-
-    document.getElementById("selectedContract")
-        .textContent="Digit "+digit;
 }
 
 
-/* CATEGORY */
+/* =========================
+   SELECT DIGIT
+========================= */
 
-function selectCategory(category){
+function selectDigit(
+    digit,
+    element
+){
 
-    if(category === "volatility"){
-        document.getElementById("selectedMarket")
-            .textContent="Volatility 10";
+    document
+        .querySelectorAll(
+            ".digit"
+        )
+        .forEach(function(item){
+
+            item.classList.remove(
+                "active"
+            );
+
+        });
+
+
+    element.classList.add(
+        "active"
+    );
+
+
+    document.getElementById(
+        "tradeType"
+    ).value = "Digits";
+
+
+    document.getElementById(
+        "selectedContract"
+    ).textContent =
+        "Digit " + digit;
+
+}
+
+
+/* =========================
+   CATEGORY
+========================= */
+
+function selectCategory(
+    category
+){
+
+    if(
+        category ===
+        "risefall"
+    ){
+
+        document.getElementById(
+            "tradeType"
+        ).value =
+            "Rise / Fall";
+
+    }
+
+
+    if(
+        category ===
+        "overunder"
+    ){
+
+        document.getElementById(
+            "tradeType"
+        ).value =
+            "Over / Under";
+
     }
 
 }
 
 
-/* PAYOUT */
+/* =========================
+   PAYOUT
+========================= */
 
-document.getElementById("tradeAmount")
-.addEventListener("input",function(){
+document
+    .getElementById(
+        "tradeAmount"
+    )
+    .addEventListener(
+        "input",
+        function(){
 
-    const amount =
-        Number(this.value) || 0;
-
-    document.getElementById("potentialPayout")
-        .textContent =
-        "$"+(amount*1.80).toFixed(2);
-
-});
+            const amount =
+                Number(
+                    this.value
+                ) || 0;
 
 
-/* START EXISTING SYSTEM */
+            document.getElementById(
+                "potentialPayout"
+            ).textContent =
+                "$" +
+                (
+                    amount * 1.80
+                ).toFixed(2);
 
-if(typeof updateAccountDisplay === "function")
+        }
+    );
+
+
+/* =========================
+   EXISTING SYSTEM
+========================= */
+
+if(
+    typeof updateAccountDisplay ===
+    "function"
+){
+
     updateAccountDisplay();
 
-if(typeof createTradingChart === "function")
+}
+
+
+if(
+    typeof createTradingChart ===
+    "function"
+){
+
     createTradingChart();
 
-if(typeof loadTradeHistory === "function")
+}
+
+
+if(
+    typeof loadTradeHistory ===
+    "function"
+){
+
     loadTradeHistory();
 
-if(typeof loadOpenPositions === "function")
+}
+
+
+if(
+    typeof loadOpenPositions ===
+    "function"
+){
+
     loadOpenPositions();
 
-if(typeof loadTradingMode === "function")
+}
+
+
+if(
+    typeof loadTradingMode ===
+    "function"
+){
+
     loadTradingMode();
+
+}
 
 </script>
 
+
 </body>
-           </html>
+
+    </html>
