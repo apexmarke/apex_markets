@@ -1511,8 +1511,6 @@ function adminLogout() {
 
 }
 
-
-
 // ================================
 // PAGE INITIALIZATION
 // ================================
@@ -1528,39 +1526,61 @@ document.addEventListener(
         loadAdminDashboard();
 
     }
-);// ================================
-// APEX MARKETS - TRADING CHART
-// ================================
+    function createTradingChart() {
 
-let chartData = [];
-let chartCanvas;
-let chartCtx;
-let chartTimer;
-
-function createTradingChart() {
-
-    chartCanvas = document.getElementById("tradingChart");
+    chartCanvas =
+        document.getElementById("tradingChart");
 
     if (!chartCanvas) return;
 
-    chartCtx = chartCanvas.getContext("2d");
-
-    // Starting BTC/USD price
-    let price = 118500;
+    chartCtx =
+        chartCanvas.getContext("2d");
 
     chartData = [];
 
-    // Create initial chart history
-    for (let i = 0; i < 60; i++) {
+    /*
+     * Start with the selected market price.
+     */
 
-        price += (Math.random() - 0.48) * 900;
+    const priceElement =
+        document.getElementById("chartPrice");
+
+    let text =
+        priceElement?.textContent || "";
+
+    let match =
+        text.match(/[\d,.]+/);
+
+    let price =
+        match
+            ? Number(match[0].replace(/,/g, ""))
+            : 1000.24;
+
+
+    /*
+     * Create initial history.
+     */
+
+    for (let i = 0; i < 70; i++) {
+
+        price +=
+            (Math.random() - 0.5) *
+            Math.max(price * 0.003, 1);
 
         chartData.push({
+
             price: price,
-            time: new Date(Date.now() - (60 - i) * 10000)
+
+            time:
+                new Date(
+                    Date.now() -
+                    (70 - i) * 10000
+                )
+
         });
 
     }
+
 
     resizeTradingChart();
 
@@ -1569,16 +1589,19 @@ function createTradingChart() {
         resizeTradingChart
     );
 
-    // Draw immediately
+
     drawTradingChart();
 
-    // Simulated live movement
+
     clearInterval(chartTimer);
 
-    chartTimer = setInterval(
-        updateTradingChart,
-        2000
-    );
+
+    chartTimer =
+        setInterval(
+            updateTradingChart,
+            1500
+        );
+
 }
 
 
