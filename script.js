@@ -516,9 +516,10 @@ function placeOrder(side) {
 
 
     const market =
-        document.getElementById(
-            "market"
-        )?.value || "BTC/USD";
+    document.getElementById(
+        "selectedMarket"
+    )?.textContent.trim() ||
+    "Volatility 10";
 
 
     const amount =
