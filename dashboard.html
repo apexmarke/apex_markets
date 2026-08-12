@@ -1,356 +1,582 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Apex Markets Dashboard</title>
-
-    <link rel="stylesheet" href="style.css">
-
-    <style>
-        /* ==============================
-           DASHBOARD LAYOUT
-        ============================== */
-
-        .dashboard-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .dashboard-title h1 {
-            margin: 0;
-        }
-
-        .dashboard-title p {
-            margin: 5px 0 0;
-            opacity: 0.7;
-        }
-
-        .profile-button {
-            text-decoration: none;
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        /* Demo / Real */
-
-        .mode-bar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        .mode-btn {
-            border: none;
-            padding: 9px 15px;
-            border-radius: 9px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .mode-btn.active {
-            box-shadow: 0 0 0 2px currentColor;
-        }
-
-        /* Account cards */
-
-        .account-summary {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .summary-card {
-            padding: 18px;
-            border-radius: 14px;
-            border: 1px solid rgba(128,128,128,0.25);
-        }
-
-        .summary-card h3 {
-            margin: 0 0 8px;
-            font-size: 14px;
-            opacity: 0.7;
-        }
-
-        .summary-value {
-            font-size: 25px;
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .positive {
-            color: #16a34a;
-        }
-
-        /* Main terminal */
-
-        .terminal-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
-            gap: 18px;
-            margin-bottom: 20px;
-        }
-
-        .panel {
-            border: 1px solid rgba(128,128,128,0.25);
-            border-radius: 14px;
-            padding: 18px;
-        }
-
-        .panel h2,
-        .panel h3 {
-            margin-top: 0;
-        }
-
-        .chart-box {
-            min-height: 320px;
-        }
-
-        #tradingChart {
-            width: 100%;
-            height: 260px;
-        }
-
-        /* Quick trade */
-
-        .trade-form label {
-            display: block;
-            margin: 14px 0 6px;
-            font-weight: 600;
-        }
-
-        .trade-form select,
-        .trade-form input {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 12px;
-            border-radius: 9px;
-            border: 1px solid #aaa;
-            background: transparent;
-        }
-
-        .order-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 18px;
-        }
-
-        .trade-button {
-            border: none;
-            padding: 13px;
-            border-radius: 9px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* Real account notice */
-
-        .real-account {
-            display: none;
-            margin-bottom: 18px;
-            padding: 18px;
-            border-radius: 14px;
-            border: 1px solid rgba(220, 38, 38, 0.4);
-        }
-
-        .real-badge {
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .real-actions {
-            display: flex;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .security-box,
-        .transaction-box {
-            margin-top: 15px;
-        }
-
-        /* Positions */
-
-        .positions-panel {
-            margin-bottom: 20px;
-        }
-
-        .position-row {
-            display: grid;
-            grid-template-columns: 1.3fr 0.8fr 1fr 1fr auto;
-            gap: 10px;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(128,128,128,0.2);
-        }
-
-        .position-row:last-child {
-            border-bottom: none;
-        }
-
-        .close-position {
-            border: none;
-            padding: 7px 10px;
-            border-radius: 7px;
-            cursor: pointer;
-        }
-
-        /* Markets */
-
-        .markets-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .market-card {
-            padding: 16px;
-            border-radius: 13px;
-            border: 1px solid rgba(128,128,128,0.25);
-        }
-
-        .market-card h3 {
-            margin: 0 0 7px;
-        }
-
-        .market-price {
-            font-size: 21px;
-            font-weight: bold;
-        }
-
-        /* History */
-
-        .history-row {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr 1fr;
-            gap: 10px;
-            padding: 11px 0;
-            border-bottom: 1px solid rgba(128,128,128,0.2);
-        }
-
-        /* Quick actions */
-
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .quick-actions a,
-        .quick-actions button {
-            text-align: center;
-            padding: 12px;
-            border-radius: 9px;
-            border: none;
-            text-decoration: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* Mobile */
-
-        @media (max-width: 800px) {
-
-            .account-summary {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
-            }
-
-            .summary-card {
-                padding: 12px 8px;
-            }
-
-            .summary-value {
-                font-size: 17px;
-            }
-
-            .summary-card h3 {
-                font-size: 11px;
-            }
-
-            .terminal-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .markets-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
-            }
-
-            .market-card {
-                padding: 10px 7px;
-            }
-
-            .market-price {
-                font-size: 15px;
-            }
-
-            .position-row {
-                grid-template-columns: 1fr 0.7fr 1fr auto;
-                font-size: 13px;
-            }
-
-            .position-row .entry-price {
-                display: none;
-            }
-
-            .history-row {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .quick-actions {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .dashboard-top {
-                align-items: flex-start;
-            }
-
-            .dashboard-title h1 {
-                font-size: 22px;
-            }
-        }
-
-        @media (max-width: 450px) {
-
-            .account-summary {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .summary-value {
-                font-size: 15px;
-            }
-
-            .dashboard-title p {
-                font-size: 12px;
-            }
-
-            .profile-button {
-                padding: 8px 10px;
-                font-size: 12px;
-            }
-
-            .chart-box {
-                min-height: 250px;
-            }
-
-            #tradingChart {
-                height: 210px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Apex Markets | Trading Dashboard</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+/* =====================================================
+   APEX MARKETS — PROFESSIONAL DASHBOARD
+===================================================== */
+
+:root {
+    --card: rgba(255,255,255,0.055);
+    --border: rgba(255,255,255,0.10);
+    --muted: rgba(255,255,255,0.62);
+    --green: #16c784;
+    --red: #ea3943;
+    --blue: #3861fb;
+}
+
+body {
+    margin: 0;
+}
+
+/* HEADER */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: .3px;
+}
+
+.menu {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.menu a {
+    text-decoration: none;
+}
+
+/* MAIN */
+
+.dashboard {
+    max-width: 1400px;
+    margin: auto;
+}
+
+/* TOP */
+
+.dashboard-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin: 25px 0 18px;
+}
+
+.dashboard-title h1 {
+    margin: 0;
+    font-size: 27px;
+}
+
+.dashboard-title p {
+    margin: 7px 0 0;
+    color: var(--muted);
+}
+
+.profile-button {
+    text-decoration: none;
+    padding: 11px 16px;
+    border-radius: 10px;
+    font-weight: 700;
+    border: 1px solid var(--border);
+}
+
+/* MODE */
+
+.mode-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.mode-btn {
+    border: 1px solid var(--border);
+    padding: 9px 15px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 700;
+    background: transparent;
+}
+
+.mode-btn.active {
+    box-shadow: 0 0 0 2px currentColor;
+}
+
+/* ACCOUNT */
+
+.account-summary {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.summary-card {
+    padding: 18px;
+    border-radius: 15px;
+    border: 1px solid var(--border);
+    background: var(--card);
+}
+
+.summary-card h3 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.summary-value {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.positive {
+    color: var(--green);
+}
+
+/* MARKET TERMINAL */
+
+.market-terminal {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    background: var(--card);
+}
+
+.market-heading {
+    padding: 17px 18px 10px;
+}
+
+.market-heading h2 {
+    margin: 0;
+}
+
+.market-heading p {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* CATEGORIES */
+
+.market-categories {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 12px 18px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.market-category {
+    flex: 0 0 auto;
+    border: 1px solid var(--border);
+    background: transparent;
+    border-radius: 9px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.market-category.active {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+}
+
+/* INSTRUMENTS */
+
+.instrument-grid {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 10px;
+    padding: 15px 18px;
+}
+
+.instrument-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.instrument-card:hover {
+    transform: translateY(-2px);
+}
+
+.instrument-card.active {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 1px var(--blue);
+}
+
+.instrument-name {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.instrument-price {
+    font-size: 18px;
+    font-weight: 800;
+    margin-top: 7px;
+}
+
+.instrument-change {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* DIGITS */
+
+.digits-section {
+    display: none;
+    padding: 15px 18px 18px;
+    border-top: 1px solid var(--border);
+}
+
+.digits-section.show {
+    display: block;
+}
+
+.digits-title {
+    margin-bottom: 12px;
+}
+
+.digits-title h3 {
+    margin: 0;
+}
+
+.digits-title p {
+    color: var(--muted);
+    margin: 5px 0;
+    font-size: 13px;
+}
+
+.digits-grid {
+    display: grid;
+    grid-template-columns: repeat(10,1fr);
+    gap: 7px;
+}
+
+.digit-card {
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 9px 3px;
+    text-align: center;
+    cursor: pointer;
+    background: transparent;
+}
+
+.digit-card strong {
+    display: block;
+    font-size: 18px;
+}
+
+.digit-card span {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.digit-card.selected {
+    border-color: var(--blue);
+    background: rgba(56,97,251,.15);
+}
+
+/* TRADING AREA */
+
+.terminal-grid {
+    display: grid;
+    grid-template-columns: minmax(0,2fr) minmax(280px,1fr);
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.panel {
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 18px;
+    background: var(--card);
+}
+
+.panel h2,
+.panel h3 {
+    margin-top: 0;
+}
+
+/* CHART */
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.chart-market {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.chart-price {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.chart-box {
+    min-height: 350px;
+}
+
+#tradingChart {
+    width: 100%;
+    height: 280px;
+}
+
+/* TRADE PANEL */
+
+.trade-panel {
+    position: relative;
+}
+
+.selected-contract {
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 12px;
+    margin-bottom: 14px;
+}
+
+.selected-contract small {
+    display: block;
+    color: var(--muted);
+    margin-bottom: 4px;
+}
+
+.selected-contract strong {
+    font-size: 18px;
+}
+
+.trade-form label {
+    display: block;
+    margin: 14px 0 6px;
+    font-weight: 700;
+}
+
+.trade-form select,
+.trade-form input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: inherit;
+}
+
+.payout-box {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 9px;
+    background: rgba(22,199,132,.08);
+}
+
+.order-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    margin-top: 16px;
+}
+
+.trade-button {
+    border: none;
+    padding: 13px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.buy-button {
+    background: var(--green);
+    color: white;
+}
+
+.sell-button {
+    background: var(--red);
+    color: white;
+}
+
+/* QUICK ACTIONS */
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.quick-actions a,
+.quick-actions button {
+    text-align: center;
+    padding: 12px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: transparent;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+/* POSITIONS */
+
+.positions-panel {
+    margin-bottom: 20px;
+}
+
+.position-row {
+    display: grid;
+    grid-template-columns: 1.4fr .8fr 1fr 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.position-row:last-child {
+    border-bottom: none;
+}
+
+.close-position {
+    border: none;
+    padding: 7px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+/* HISTORY */
+
+.history-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 1fr;
+    gap: 10px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+/* REAL ACCOUNT */
+
+.real-account {
+    display: none;
+    margin-bottom: 18px;
+    padding: 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(220,38,38,.4);
+}
+
+.real-badge {
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.real-actions {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.security-box,
+.transaction-box {
+    margin-top: 15px;
+}
+
+/* MOBILE */
+
+@media (max-width:900px) {
+
+    .instrument-grid {
+        grid-template-columns: repeat(3,1fr);
+    }
+
+    .digits-grid {
+        grid-template-columns: repeat(5,1fr);
+    }
+
+    .terminal-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width:600px) {
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .menu {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .dashboard-title h1 {
+        font-size: 21px;
+    }
+
+    .account-summary {
+        gap: 7px;
+    }
+
+    .summary-card {
+        padding: 12px 8px;
+    }
+
+    .summary-card h3 {
+        font-size: 10px;
+    }
+
+    .summary-value {
+        font-size: 16px;
+    }
+
+    .instrument-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .quick-actions {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .chart-box {
+        min-height: 280px;
+    }
+
+    #tradingChart {
+        height: 220px;
+    }
+
+    .position-row {
+        grid-template-columns: 1fr .8fr 1fr auto;
+        font-size: 12px;
+    }
+
+    .position-row .entry-price {
+        display: none;
+    }
+
+    .history-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+</style>
 </head>
 
 <body>
@@ -370,9 +596,10 @@
 </header>
 
 
-<main class="section">
+<main class="section dashboard">
 
-    <!-- TOP BAR -->
+    <!-- TOP -->
+
     <div class="dashboard-top">
 
         <div class="dashboard-title">
@@ -394,7 +621,7 @@
     </div>
 
 
-    <!-- DEMO / REAL TOGGLE -->
+    <!-- MODE -->
 
     <div class="mode-bar">
 
@@ -426,47 +653,27 @@
     <div class="account-summary">
 
         <div class="summary-card">
-
             <h3>Balance</h3>
 
-            <p
-                class="summary-value"
-                id="balance">
-
+            <p class="summary-value" id="balance">
                 $10,000.00
-
             </p>
-
         </div>
 
-
         <div class="summary-card">
-
             <h3>Equity</h3>
 
-            <p
-                class="summary-value"
-                id="equity">
-
+            <p class="summary-value" id="equity">
                 $10,000.00
-
             </p>
-
         </div>
 
-
         <div class="summary-card">
-
             <h3>P/L</h3>
 
-            <p
-                class="summary-value positive"
-                id="profit">
-
+            <p class="summary-value positive" id="profit">
                 +$0.00
-
             </p>
-
         </div>
 
     </div>
@@ -488,40 +695,26 @@
             History
         </a>
 
+        <a href="profile.html">
+            Profile
         </a>
 
     </div>
 
 
-    <!-- REAL ACCOUNT AREA -->
+    <!-- REAL ACCOUNT -->
 
-    <div
-        id="realModeNotice"
-        class="real-account">
+    <div id="realModeNotice" class="real-account">
 
         <span class="real-badge">
             REAL ACCOUNT
         </span>
 
-        <h2>
-            Real Account Center
-        </h2>
+        <h2>Real Account Center</h2>
 
         <p>
             Real-money functionality is currently unavailable.
         </p>
-
-        <div class="real-balance">
-
-            <span>
-                Real Account Balance
-            </span>
-
-            <strong>
-                $0.00
-            </strong>
-
-        </div>
 
         <div class="real-actions">
 
@@ -545,63 +738,223 @@
 
         <div class="security-box">
 
-            <h3>
-                Account Verification
-            </h3>
+            <h3>Account Verification</h3>
 
-            <p>
-                ✓ Email account created
-            </p>
+            <p>✓ Email account created</p>
 
-            <p>
-                ○ Identity verification: Pending
-            </p>
+            <p>○ Identity verification: Pending</p>
 
-            <p>
-                ○ Account approval: Pending
-            </p>
+            <p>○ Account approval: Pending</p>
 
         </div>
 
         <div class="transaction-box">
 
-            <h3>
-                Transaction History
-            </h3>
+            <h3>Transaction History</h3>
 
-            <p>
-                No real transactions yet.
-            </p>
+            <p>No real transactions yet.</p>
 
         </div>
 
     </div>
 
 
-    <!-- TRADING TERMINAL -->
+    <!-- MARKET TERMINAL -->
+
+    <section class="market-terminal">
+
+        <div class="market-heading">
+
+            <h2>Markets</h2>
+
+            <p>
+                Select a market category and instrument to begin demo trading.
+            </p>
+
+        </div>
+
+
+        <!-- CATEGORIES -->
+
+        <div class="market-categories">
+
+            <button
+                class="market-category active"
+                onclick="showCategory('volatility', this)">
+
+                Volatility
+
+            </button>
+
+            <button
+                class="market-category"
+                onclick="showCategory('digits', this)">
+
+                Digits
+
+            </button>
+
+            <button
+                class="market-category"
+                onclick="showCategory('risefall', this)">
+
+                Rise / Fall
+
+            </button>
+
+            <button
+                class="market-category"
+                onclick="showCategory('overunder', this)">
+
+                Over / Under
+
+            </button>
+
+            <button
+                class="market-category"
+                onclick="showCategory('evenodd', this)">
+
+                Even / Odd
+
+            </button>
+
+        </div>
+
+
+        <!-- INSTRUMENTS -->
+
+        <div class="instrument-grid" id="instrumentGrid">
+
+        </div>
+
+
+        <!-- DIGITS -->
+
+        <div class="digits-section" id="digitsSection">
+
+            <div class="digits-title">
+
+                <h3>Digits 0–9</h3>
+
+                <p>
+                    Select a digit to use it in the demo trade.
+                </p>
+
+            </div>
+
+            <div class="digits-grid">
+
+                <div class="digit-card" onclick="selectDigit(0)">
+                    <strong>0</strong>
+                    <span>12.4%</span>
+                </div>
+
+                <div class="digit-card" onclick="selectDigit(1)">
+                    <strong>1</strong>
+                    <span>8.7%</span>
+                </div>
+
+                <div class="digit-card" onclick="selectDigit(2)">
+                    <strong>2</strong>
+                    <span>9.6%</span>
+                </div>
+
+                <div class="digit-card" onclick="selectDigit(3)">
+                    <strong>3</strong>
+                    <span>11.2%</span>
+                </div>
+
+                <div class="digit-card" onclick="selectDigit(4)">
+                    <strong>4</strong>
+                    <span>10.1%</span>
+                </div>
+
+                <div class="digit-card" onclick="selectDigit(5)">
+                    <strong>5</strong>
+                    <span>9.4%</span>
+                </div>
+
+                <div class="digit-card" onclick="selectDigit(6)">
+                    <strong>6</strong>
+                    <span>7.8%</span>
+                </div>
+
+                <div class="digit-card" onclick="selectDigit(7)">
+                    <strong>7</strong>
+                    <span>10.6%</span>
+                </div>
+
+                <div class="digit-card" onclick="selectDigit(8)">
+                    <strong>8</strong>
+                    <span>11.8%</span>
+                </div>
+
+                <div class="digit-card" onclick="selectDigit(9)">
+                    <strong>9</strong>
+                    <span>8.4%</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CHART + TRADE -->
 
     <div class="terminal-grid">
+
 
         <!-- CHART -->
 
         <div class="panel chart-box">
 
-            <h2>
-                BTC/USD
-            </h2>
+            <div class="chart-header">
+
+                <div>
+
+                    <div
+                        class="chart-market"
+                        id="selectedMarket">
+
+                        Volatility 10
+
+                    </div>
+
+                    <div class="chart-price" id="chartPrice">
+                        Demo market
+                    </div>
+
+                </div>
+
+                <span class="positive">
+                    ● LIVE DEMO
+                </span>
+
+            </div>
 
             <canvas id="tradingChart"></canvas>
 
         </div>
 
 
-        <!-- QUICK TRADE -->
+        <!-- TRADE PANEL -->
 
-        <div class="panel">
+        <div class="panel trade-panel">
 
-            <h2>
-                Quick Trade
-            </h2>
+            <h2>Trade</h2>
+
+            <div class="selected-contract">
+
+                <small>Selected Market</small>
+
+                <strong id="selectedContract">
+                    Volatility 10
+                </strong>
+
+            </div>
+
 
             <form
                 class="trade-form"
@@ -613,49 +966,69 @@
 
                 <select id="market">
 
-                    <option value="BTC/USD">
-                        BTC/USD
-                    </option>
+                    <option>Volatility 10</option>
+                    <option>Volatility 25</option>
+                    <option>Volatility 50</option>
+                    <option>Volatility 75</option>
+                    <option>Volatility 100</option>
 
-                    <option value="EUR/USD">
-                        EUR/USD
-                    </option>
+                </select>
 
-                    <option value="GOLD">
-                        GOLD
-                    </option>
+
+                <label for="tradeType">
+                    Contract
+                </label>
+
+                <select id="tradeType">
+
+                    <option>Rise / Fall</option>
+                    <option>Digits</option>
+                    <option>Over / Under</option>
+                    <option>Even / Odd</option>
 
                 </select>
 
 
                 <label for="tradeAmount">
-                    Trade Amount
+                    Stake Amount
                 </label>
 
                 <input
                     type="number"
                     id="tradeAmount"
                     placeholder="Enter amount"
-                    min="1">
+                    min="1"
+                    step="0.01">
+
+
+                <div class="payout-box">
+
+                    <span>Potential payout</span>
+
+                    <strong id="potentialPayout">
+                        $0.00
+                    </strong>
+
+                </div>
 
 
                 <div class="order-buttons">
 
                     <button
                         type="button"
-                        class="trade-button primary-btn"
+                        class="trade-button buy-button"
                         onclick="placeOrder('BUY')">
 
-                        BUY
+                        BUY / RISE
 
                     </button>
 
                     <button
                         type="button"
-                        class="trade-button secondary-btn"
+                        class="trade-button sell-button"
                         onclick="placeOrder('SELL')">
 
-                        SELL
+                        SELL / FALL
 
                     </button>
 
@@ -672,80 +1045,11 @@
 
     <div class="panel positions-panel">
 
-        <h2>
-            Open Positions
-        </h2>
+        <h2>Open Positions</h2>
 
         <div id="openPositions">
 
-            <p>
-                No open positions.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <!-- MARKETS -->
-
-    <div>
-
-        <h2>
-            Markets
-        </h2>
-
-        <div class="markets-grid">
-
-            <div class="market-card">
-
-                <h3>
-                    BTC/USD
-                </h3>
-
-                <div class="market-price">
-                    $118,500
-                </div>
-
-                <span class="positive">
-                    +2.45%
-                </span>
-
-            </div>
-
-
-            <div class="market-card">
-
-                <h3>
-                    EUR/USD
-                </h3>
-
-                <div class="market-price">
-                    1.1725
-                </div>
-
-                <span class="positive">
-                    +0.38%
-                </span>
-
-            </div>
-
-
-            <div class="market-card">
-
-                <h3>
-                    GOLD
-                </h3>
-
-                <div class="market-price">
-                    $3,450
-                </div>
-
-                <span class="positive">
-                    +1.12%
-                </span>
-
-            </div>
+            <p>No open positions.</p>
 
         </div>
 
@@ -758,15 +1062,11 @@
         class="panel"
         id="recentTrades">
 
-        <h2>
-            Recent Trades
-        </h2>
+        <h2>Recent Trades</h2>
 
         <div id="tradeHistory">
 
-            <p>
-                No trades yet.
-            </p>
+            <p>No trades yet.</p>
 
         </div>
 
@@ -777,9 +1077,7 @@
 
 <footer>
 
-    <p>
-        Apex Markets Demo Platform
-    </p>
+    <p>Apex Markets Demo Platform</p>
 
     <p>
         Simulated trading only — no real money.
@@ -788,7 +1086,7 @@
 </footer>
 
 
-<!-- EXISTING JAVASCRIPT -->
+<!-- EXISTING CONNECTIONS -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
@@ -797,53 +1095,273 @@
 
 <script>
 
-    /* ==============================
-       LOGIN CHECK
-    ============================== */
+/* =====================================================
+   LOGIN CHECK
+===================================================== */
 
-    const loggedIn =
-        localStorage.getItem("apexLoggedIn");
+const loggedIn =
+    localStorage.getItem("apexLoggedIn");
 
-    if (loggedIn !== "true") {
+if (loggedIn !== "true") {
 
-        window.location.href =
-            "login.html";
+    window.location.href = "login.html";
+
+}
+
+
+/* =====================================================
+   USER NAME
+===================================================== */
+
+const name =
+    localStorage.getItem("apexName");
+
+if (name) {
+
+    document.getElementById("welcome").textContent =
+        "Welcome, " + name + "!";
+
+}
+
+
+/* =====================================================
+   MARKET DATA
+===================================================== */
+
+const marketData = {
+
+    volatility: [
+        ["Volatility 10","1000.24","+0.42%"],
+        ["Volatility 25","2540.18","+0.87%"],
+        ["Volatility 50","5012.64","+1.14%"],
+        ["Volatility 75","7488.31","+0.63%"],
+        ["Volatility 100","10024.72","+1.42%"]
+    ],
+
+    risefall: [
+        ["BTC/USD","118500","+2.45%"],
+        ["EUR/USD","1.1725","+0.38%"],
+        ["GOLD","3450","+1.12%"],
+        ["ETH/USD","4310","+1.76%"]
+    ],
+
+    overunder: [
+        ["Over / Under 0","Demo","10.2%"],
+        ["Over / Under 1","Demo","9.8%"],
+        ["Over / Under 2","Demo","11.4%"],
+        ["Over / Under 3","Demo","8.9%"]
+    ],
+
+    evenodd: [
+        ["Even","Demo","50.1%"],
+        ["Odd","Demo","49.9%"]
+    ]
+
+};
+
+
+/* =====================================================
+   CATEGORY DISPLAY
+===================================================== */
+
+function showCategory(category, button) {
+
+    document
+        .querySelectorAll(".market-category")
+        .forEach(btn => btn.classList.remove("active"));
+
+    button.classList.add("active");
+
+    const grid =
+        document.getElementById("instrumentGrid");
+
+    const digits =
+        document.getElementById("digitsSection");
+
+    if (category === "digits") {
+
+        grid.innerHTML = "";
+
+        digits.classList.add("show");
+
+        document.getElementById("selectedMarket").textContent =
+            "Digits";
+
+        document.getElementById("selectedContract").textContent =
+            "Digits";
+
+        return;
 
     }
 
+    digits.classList.remove("show");
 
-    /* ==============================
-       USER NAME
-    ============================== */
+    grid.innerHTML = "";
 
-    const name =
-        localStorage.getItem("apexName");
+    const data =
+        marketData[category] || marketData.volatility;
 
-    if (name) {
+    data.forEach((item,index) => {
 
-        document.getElementById(
-            "welcome"
-        ).textContent =
-            "Welcome, " + name + "!";
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "instrument-card" +
+            (index === 0 ? " active" : "");
+
+        card.innerHTML = `
+
+            <div class="instrument-name">
+                ${item[0]}
+            </div>
+
+            <div class="instrument-price">
+                ${item[1]}
+            </div>
+
+            <div class="instrument-change positive">
+                ${item[2]}
+            </div>
+
+        `;
+
+        card.onclick = function () {
+
+            document
+                .querySelectorAll(".instrument-card")
+                .forEach(c =>
+                    c.classList.remove("active")
+                );
+
+            card.classList.add("active");
+
+            selectMarket(item[0], item[1]);
+
+        };
+
+        grid.appendChild(card);
+
+    });
+
+    if (data.length > 0) {
+
+        selectMarket(data[0][0], data[0][1]);
 
     }
 
+}
 
-    /* ==============================
-       START DASHBOARD
-    ============================== */
 
-    updateAccountDisplay();
+/* =====================================================
+   SELECT MARKET
+===================================================== */
 
-    createTradingChart();
+function selectMarket(name, price) {
 
-    loadTradeHistory();
+    document.getElementById(
+        "selectedMarket"
+    ).textContent = name;
 
-    loadOpenPositions();
+    document.getElementById(
+        "selectedContract"
+    ).textContent = name;
 
-    loadTradingMode();
+    document.getElementById(
+        "chartPrice"
+    ).textContent =
+        "Demo price: " + price;
+
+}
+
+
+/* =====================================================
+   DIGIT SELECTION
+===================================================== */
+
+function selectDigit(digit) {
+
+    document
+        .querySelectorAll(".digit-card")
+        .forEach(card =>
+            card.classList.remove("selected")
+        );
+
+    event.currentTarget.classList.add("selected");
+
+    document.getElementById(
+        "selectedMarket"
+    ).textContent =
+        "Digit " + digit;
+
+    document.getElementById(
+        "selectedContract"
+    ).textContent =
+        "Digit " + digit;
+
+    document.getElementById(
+        "tradeType"
+    ).value =
+        "Digits";
+
+}
+
+
+/* =====================================================
+   PAYOUT PREVIEW
+===================================================== */
+
+const amountInput =
+    document.getElementById("tradeAmount");
+
+if (amountInput) {
+
+    amountInput.addEventListener(
+        "input",
+        function () {
+
+            const amount =
+                Number(this.value) || 0;
+
+            const payout =
+                amount * 1.80;
+
+            document.getElementById(
+                "potentialPayout"
+            ).textContent =
+                "$" + payout.toFixed(2);
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   START DASHBOARD
+===================================================== */
+
+updateAccountDisplay();
+
+createTradingChart();
+
+loadTradeHistory();
+
+loadOpenPositions();
+
+loadTradingMode();
+
+
+/* =====================================================
+   LOAD DEFAULT MARKET
+===================================================== */
+
+showCategory(
+    "volatility",
+    document.querySelector(".market-category")
+);
 
 </script>
 
 </body>
-    </html>
+</html>
