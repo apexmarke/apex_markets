@@ -51,10 +51,16 @@
 
 
         <button
-            class="btn primary-btn"
-            onclick="alert('Login button works')">
-            Login
+    type="button"
+    class="btn primary-btn"
+    id="loginButton">
+    Login
         </button>
+        <script>
+document.getElementById("loginButton").addEventListener("click", function () {
+    alert("BUTTON WORKS");
+});
+        </script>
 
 
         <br><br>
