@@ -2373,3 +2373,4 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
+alert("SCRIPT.JS IS LOADING");
