@@ -58,8 +58,98 @@
 </button>
 
 <script>
-document.getElementById("loginButton").addEventListener("click", function () {
-    alert(typeof login);
+document.getElementById("loginButton").addEventListener("click", async function () {
+
+    const email =
+        document.getElementById("loginEmail").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value;
+
+    if (!email || !password) {
+        alert("Please enter your email and password.");
+        return;
+    }
+
+    if (typeof supabaseClient === "undefined") {
+        alert("Supabase connection is not available.");
+        return;
+    }
+
+    try {
+
+        const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+        if (error) {
+            alert(error.message);
+            return;
+        }
+
+        localStorage.setItem("apexLoggedIn", "true");
+        localStorage.setItem(
+            "apexEmail",
+            data.user?.email || email
+        );
+
+        if (data.user?.user_metadata?.full_name) {
+            localStorage.setItem(
+                "apexName",
+                data.user.user_metadata.full_name
+            );
+        }
+
+        const { data: profile } =
+            await supabaseClient
+                .from("Profile")
+                .select("balance, full_name")
+                .eq("id", data.user.id)
+                .maybeSingle();
+
+        if (profile) {
+
+            localStorage.setItem(
+                "apexBalance",
+                String(profile.balance ?? 10000)
+            );
+
+            if (profile.full_name) {
+                localStorage.setItem(
+                    "apexName",
+                    profile.full_name
+                );
+            }
+
+        } else {
+
+            localStorage.setItem(
+                "apexBalance",
+                "10000"
+            );
+
+        }
+
+        localStorage.setItem(
+            "apexTradingMode",
+            "demo"
+        );
+
+        window.location.href = "dashboard.html";
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to sign in: " +
+            error.message
+        );
+
+    }
+
 });
 </script>
 
