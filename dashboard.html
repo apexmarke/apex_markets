@@ -556,12 +556,24 @@ body{
         </button>
 
 
-        <button
-            onclick="logout()">
+        <button type="button" id="logoutButton">Logout</button>
+        
+        <script>
+document.getElementById("logoutButton").addEventListener("click", async function () {
 
-            Logout
+    try {
+        if (typeof supabaseClient !== "undefined") {
+            await supabaseClient.auth.signOut();
+        }
+    } catch (error) {
+        console.error(error);
+    }
 
-        </button>
+    localStorage.setItem("apexLoggedIn", "false");
+
+    window.location.href = "login.html";
+});
+        </script>
 
     </div>
 
