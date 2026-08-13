@@ -1635,46 +1635,7 @@ function resizeTradingChart() {
     );
 
     drawTradingChart();
-}
 
-
-// ================================
-// UPDATE CHART
-// ================================
-
-function updateTradingChart() {
-
-    if (!chartData.length) return;
-
-    const last =
-        chartData[chartData.length - 1].price;
-
-    // Small simulated price movement
-    const movement =
-        (Math.random() - 0.48) * 1000;
-
-    const newPrice =
-        Math.max(
-            1000,
-            last + movement
-        );
-
-    chartData.push({
-
-        price: newPrice,
-
-        time: new Date()
-
-    });
-
-    // Keep the chart at 60 candles/points
-    if (chartData.length > 60) {
-
-        chartData.shift();
-
-    }
-
-    drawTradingChart();
 }
 
 // ================================
