@@ -2362,3 +2362,14 @@ function drawTradingChart() {
     }
 
 }
+// ================================
+// START TRADING CHART
+// ================================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (typeof createTradingChart === "function") {
+        createTradingChart();
+    }
+
+});
